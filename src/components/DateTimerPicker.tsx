@@ -237,7 +237,7 @@ export function DateTimePicker({
         <Button
           variant="outline"
           className={cn(
-            "dark:bg-black-600 border-slate-300 dark:border-white dark:text-white flex flex-row justify-start font-normal text-sm",
+            "border-slate-300 flex flex-row justify-start font-normal text-sm",
             !date && "text-muted-foreground"
           )}>
           <CalendarIcon className="mr-2 h-4 w-8" color="darkgray" />

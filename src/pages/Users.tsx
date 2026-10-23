@@ -52,7 +52,7 @@ const formatDate = (dateStr: string | number | Date) => {
 };
 
 export default function Users() {
-  const { downloadAndSetUserAvatar } = useUser();
+  const { downloadAndSetUserAvatar, schoolId } = useUser();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
@@ -82,7 +82,10 @@ export default function Users() {
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
-        const { data, error } = await supabase.from("profiles").select("*");
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("school_id", schoolId);
 
         if (error) throw error;
 
@@ -149,7 +152,7 @@ export default function Users() {
         if (hours === 0) return null;
         return (
           <div className="flex items-left">
-            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full border-b border border-black dark:border-slate-600 text-gray dark:text-slate-100">
+            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full border-b border border-black text-gray">
               {profile.lessonsCount}
             </span>
           </div>
@@ -160,7 +163,7 @@ export default function Users() {
       accessorKey: "licenza_date",
       header: "Licenza",
       cell: ({ row }) => (
-        <span className="dark:text-slate-100">
+        <span>
           {formatDate(row.original.licenza_date || "")}
         </span>
       ),
@@ -171,7 +174,7 @@ export default function Users() {
       cell: ({ row }) => {
         const profile = row.original;
         if (!profile.licenza_date)
-          return <span className="dark:text-slate-400">N/A</span>;
+          return <span>N/A</span>;
 
         const licenseDate = new Date(profile.licenza_date);
         const today = new Date();
@@ -204,7 +207,7 @@ export default function Users() {
         row.original.soccorritori && (
           <Badge
             variant="tertiary"
-            className="text-sm text-white dark:bg-[#003d34c7] dark:border-[#009e86] dark:text-slate-100 ">
+            className="text-sm text-white dark:bg-[#003d34c7] dark:border-[#009e86]">
             ok
           </Badge>
         ),
@@ -216,7 +219,7 @@ export default function Users() {
         row.original.sensibilizzazione && (
           <Badge
             variant="tertiary"
-            className="text-sm text-white dark:bg-[#003d34f5] dark:border-[#009e86] dark:text-slate-100">
+            className="text-sm text-white dark:bg-[#003d34f5] dark:border-[#009e86]">
             ok
           </Badge>
         ),
@@ -225,13 +228,13 @@ export default function Users() {
       accessorKey: "email",
       header: "Email",
       cell: ({ row }) => (
-        <span className="dark:text-slate-100">{row.original.email}</span>
+        <span>{row.original.email}</span>
       ),
     },
     {
       id: "actions",
       header: () => (
-        <div className="text-right dark:text-slate-100">Azioni</div>
+        <div className="text-right">Azioni</div>
       ),
       cell: ({ row }) => {
         const profile = row.original;
@@ -240,7 +243,7 @@ export default function Users() {
             <Button
               variant="outline"
               size="sm"
-              className="mr-2 dark:bg-white dark:text-slate-900 dark:border-slate-200 dark:hover:bg-slate-100"
+              className="mr-2"
               onClick={() => navigate(`/user-edit/${profile.id}`)}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -258,8 +261,7 @@ export default function Users() {
             </Button>
             <Button
               variant="outline"
-              size="sm"
-              className="dark:bg-white dark:text-slate-900 dark:border-slate-200 dark:hover:bg-slate-100">
+              size="sm">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -283,7 +285,7 @@ export default function Users() {
 
   return (
     <div className="container py-2 space-y-6">
-      <Card className="dark:border-slate-700 dark:bg-black-900">
+      <Card>
         <CardContent>
           <DataTable
             columns={columns}

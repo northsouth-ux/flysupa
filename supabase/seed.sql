@@ -1,0 +1,3 @@
+-- Local dev seed data (optional).
+-- Runs on `supabase db reset` / `supabase db seed`.
+-- Add INSERTs here if you want a pre-populated local environment.

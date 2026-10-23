@@ -16,6 +16,11 @@ import UserEdit from "./components/UserEditForm";
 import EditLesson from "./pages/EditLesson";
 import ConfirmRegistration from "./pages/Auth/ConfirmRegistration";
 import Dashboard from "./pages/Dashboard";
+import SchoolRegistration from "./pages/SchoolRegistration";
+import SchoolAdmin from "./pages/SchoolAdmin";
+import PlatformAdmin from "./pages/PlatformAdmin";
+import Onboarding from "./pages/Onboarding";
+import Join from "./pages/Join";
 
 function App() {
   const location = useLocation();
@@ -62,6 +67,11 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/check" element={<Check />} />
               <Route path="/auth/confirm" element={<ConfirmRegistration />} />
+              <Route path="/register-school" element={<SchoolRegistration />} />
+              <Route path="/onboarding" element={<Onboarding />} />
+              <Route path="/school-admin" element={<SchoolAdmin />} />
+              <Route path="/platform-admin" element={<PlatformAdmin />} />
+              <Route path="/join" element={<Join />} />
             </Routes>
           </div>
         </div>

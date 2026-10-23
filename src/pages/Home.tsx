@@ -33,7 +33,7 @@ interface UpcomingLesson {
 }
 
 export default function Home() {
-  const { user, isAdmin, downloadAndSetUserAvatar } = useUser();
+  const { user, isAdmin, schoolId, downloadAndSetUserAvatar } = useUser();
   const navigate = useNavigate();
   const [upcomingLessons, setUpcomingLessons] = useState<UpcomingLesson[]>([]);
   const [loading, setLoading] = useState(false);
@@ -86,7 +86,8 @@ export default function Home() {
       const { data, error } = await supabase
         .from("lessons")
         .select("id", { count: "exact" })
-        .eq("profile_id", profileId);
+        .eq("profile_id", profileId)
+        .eq("school_id", schoolId);
 
       if (error) {
         console.error("Error counting lessons for profile:", error);
@@ -151,6 +152,7 @@ export default function Home() {
       const { count, error: countError } = await supabase
         .from("lessons")
         .select("*", { count: "exact", head: true })
+        .eq("school_id", schoolId)
         .gte("date", new Date().toISOString().split("T")[0]);
 
       if (countError) {
@@ -172,6 +174,7 @@ export default function Home() {
           profiles (avatar_url, nome_utente)
         `
         )
+        .eq("school_id", schoolId)
         .gte("date", new Date().toISOString().split("T")[0])
         .order("date", { ascending: true })
         .order("time", { ascending: true })
@@ -264,9 +267,9 @@ export default function Home() {
     <div className="container py-2 space-y-6">
       {user ? (
         isAdmin ? (
-          <Card className="dark:border-slate-700 dark:bg-black-900">
+          <Card>
             <CardHeader>
-              <h1 className="text-2xl font-bold tracking-tight dark:text-slate-100">
+              <h1 className="text-2xl font-bold tracking-tight">
                 Prossime lezioni
               </h1>
               <p className="text-sm text-muted-foreground">
@@ -275,19 +278,19 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               {loading ? (
-                <div className="text-center py-4 dark:text-slate-400">
+                <div className="text-center py-4">
                   Caricamento lezioni...
                 </div>
               ) : upcomingLessons.length > 0 ? (
                 <Table>
-                  <TableCaption className="dark:text-slate-400">
+                  <TableCaption>
                     {totalPages > 1 ? (
                       <div className="flex justify-between items-center">
                         <Button
                           variant="outline"
                           disabled={currentPage === 0}
                           onClick={() => setCurrentPage(currentPage - 1)}
-                          className="dark:bg-white dark:text-slate-900 dark:border-slate-200 dark:hover:bg-slate-100">
+                        >
                           Precedenti
                         </Button>
 
@@ -323,7 +326,7 @@ export default function Home() {
                             loading
                           }
                           onClick={() => setCurrentPage(currentPage + 1)}
-                          className="dark:bg-white dark:text-slate-900 dark:border-slate-200 dark:hover:bg-slate-100">
+                        >
                           Prossime
                         </Button>
                       </div>
@@ -340,18 +343,18 @@ export default function Home() {
                     )}
                   </TableCaption>
                   <TableHeader>
-                    <TableRow className="dark:border-slate-700">
-                      <TableHead className="dark:text-slate-100">
+                    <TableRow>
+                      <TableHead>
                         Studente
                       </TableHead>
-                      <TableHead className="dark:text-slate-100">
+                      <TableHead>
                         Data
                       </TableHead>
-                      <TableHead className="dark:text-slate-100">Ora</TableHead>
-                      <TableHead className="dark:text-slate-100">
+                      <TableHead>Ora</TableHead>
+                      <TableHead>
                         Ore/lez.
                       </TableHead>
-                      <TableHead className="text-right dark:text-slate-100">
+                      <TableHead className="text-right">
                         Azioni
                       </TableHead>
                     </TableRow>
@@ -361,9 +364,8 @@ export default function Home() {
                       <>
                         <TableRow className="">
                           <TableCell
-                            colSpan={4}
-                            className="dark:bg-black-800 dark:border-slate-700">
-                            <div className="font-semibold py-1 dark:text-slate-100">
+                            colSpan={4}>
+                            <div className="font-semibold py-1">
                               Oggi
                             </div>
                           </TableCell>
@@ -371,13 +373,13 @@ export default function Home() {
                         {todayLessons.map((lesson) => (
                           <TableRow
                             key={lesson.id}
-                            className="dark:border-slate-700 dark:hover:bg-slate-800/50 cursor-pointer"
+                            className="cursor-pointer"
                             onClick={(e) => {
                               e.stopPropagation();
                               navigate(`/user-edit/${lesson.profile_id}`);
                             }}
                             title={`Click to view ${lesson.profiles?.nome_utente}'s profile`}>
-                            <TableCell className="font-medium dark:text-slate-100">
+                            <TableCell className="font-medium">
                               <div className="flex items-center gap-2">
                                 <Avatar
                                   size="sm"
@@ -390,16 +392,16 @@ export default function Home() {
                                 </span>
                               </div>
                             </TableCell>
-                            <TableCell className="dark:text-slate-100">
+                            <TableCell>
                               {formatDate(lesson.date)}
                             </TableCell>
-                            <TableCell className="dark:text-slate-100">
+                            <TableCell>
                               {formatTime(lesson.time)}
                             </TableCell>
-                            <TableCell className="dark:text-slate-100">
+                            <TableCell>
                               <Badge
                                 variant={"outline"}
-                                className="dark:border-slate-600 dark:text-slate-100">
+                                className="">
                                 {lesson.amount_hours}h
                               </Badge>
                             </TableCell>
@@ -408,7 +410,6 @@ export default function Home() {
                               onClick={(e) => e.stopPropagation()}>
                               <Button
                                 variant="outline"
-                                className="dark:bg-white dark:text-slate-900 dark:border-slate-200 dark:hover:bg-slate-100"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   navigate(`/edit-lesson/${lesson?.id}`, {
@@ -443,8 +444,8 @@ export default function Home() {
                         <TableRow>
                           <TableCell
                             colSpan={4}
-                            className="bg-muted dark:bg-black-800 dark:border-slate-700">
-                            <div className="font-semibold py-1 dark:text-slate-100">
+                            className="bg-muted">
+                            <div className="font-semibold py-1">
                               Prossimamente
                             </div>
                           </TableCell>
@@ -452,12 +453,12 @@ export default function Home() {
                         {futureLessons.map((lesson) => (
                           <TableRow
                             key={lesson.id}
-                            className="dark:border-slate-700 dark:hover:bg-slate-800/50 cursor-pointer"
+                            className="cursor-pointer"
                             onClick={() =>
                               navigate(`/user-edit/${lesson.profile_id}`)
                             }
                             title={`Click to view ${lesson.profiles?.nome_utente}'s profile`}>
-                            <TableCell className="font-medium dark:text-slate-100">
+                            <TableCell className="font-medium">
                               <div className="flex items-center gap-2">
                                 <Avatar
                                   size="sm"
@@ -471,16 +472,16 @@ export default function Home() {
                                 </span>
                               </div>
                             </TableCell>
-                            <TableCell className="dark:text-slate-100">
+                            <TableCell>
                               {formatDate(lesson.date)}
                             </TableCell>
-                            <TableCell className="dark:text-slate-100">
+                            <TableCell>
                               {formatTime(lesson.time)}
                             </TableCell>
-                            <TableCell className="dark:text-slate-100">
+                            <TableCell>
                               <Badge
                                 variant={"outline"}
-                                className="dark:border-slate-600 dark:text-slate-100">
+                                className="">
                                 {lesson.amount_hours}h
                               </Badge>
                             </TableCell>
@@ -489,7 +490,6 @@ export default function Home() {
                               onClick={(e) => e.stopPropagation()}>
                               <Button
                                 variant="outline"
-                                className="dark:bg-white dark:text-slate-900 dark:border-slate-200 dark:hover:bg-slate-100"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   navigate(`/edit-lesson/${lesson.id}`);
@@ -517,7 +517,7 @@ export default function Home() {
                   </TableBody>
                 </Table>
               ) : (
-                <div className="text-center py-4 dark:text-slate-400">
+                <div className="text-center py-4">
                   No upcoming lessons found
                 </div>
               )}

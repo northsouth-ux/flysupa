@@ -24,18 +24,18 @@ export default function RegisterForm() {
   };
 
   return (
-    <section className="dark:bg-black">
+    <section>
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <Card className="w-full md:max-w-md dark:bg-gray-900 dark:border-gray-800">
+        <Card className="w-full md:max-w-md">
           <CardHeader>
-            <CardTitle className="text-xl md:text-2xl dark:text-white">
+            <CardTitle className="text-xl md:text-2xl">
               Crea un nuovo account
             </CardTitle>
           </CardHeader>
           <CardContent>
             <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
               <div className="space-y-2">
-                <Label htmlFor="email" className="dark:text-white">Mail</Label>
+                <Label htmlFor="email">Mail</Label>
                 <Input
                   type="email"
                   required
@@ -43,23 +43,21 @@ export default function RegisterForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@company.com"
-                  className="dark:bg-gray-800 dark:text-white dark:border-gray-700 dark:placeholder:text-gray-400 dark:focus:border-gray-600 dark:focus:ring-gray-600"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password" className="dark:text-white">Password</Label>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   type="password"
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="dark:bg-gray-800 dark:text-white dark:border-gray-700 dark:placeholder:text-gray-400 dark:focus:border-gray-600 dark:focus:ring-gray-600"
                 />
               </div>
               <Button 
                 type="submit" 
-                className="w-full dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+                className="w-full"
               >
                 Iscriviti
               </Button>

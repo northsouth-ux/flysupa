@@ -61,7 +61,7 @@ const getSegmentPath = (index: number) => {
 // Simple user icon for fallback
 const UserIcon = () => (
   <svg
-    className="w-6 h-6 text-slate-400 dark:text-slate-600"
+    className="w-6 h-6 text-slate-400"
     fill="none"
     stroke="currentColor"
     viewBox="0 0 24 24"
@@ -148,7 +148,7 @@ export default function Avatar({
           className={`transition-colors duration-300 ${
             index < completedSegments
               ? "stroke-green-500 dark:stroke-green-500"
-              : "stroke-slate-200 dark:stroke-slate-700"
+              : "stroke-slate-200"
           }`}
         />
       ))}
@@ -173,7 +173,6 @@ export default function Avatar({
             relative
             z-10
             bg-slate-100
-            dark:bg-black-800
             overflow-hidden
           `}>
           {imgUrl ? (
@@ -216,7 +215,6 @@ export default function Avatar({
               relative
               z-10
               bg-slate-100
-              dark:bg-black-800
               overflow-hidden
             `}>
             {imgUrl ? (

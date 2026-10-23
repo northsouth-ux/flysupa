@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../services/supabaseClient.tsx";
+import { useUser } from "@/hooks/useUser";
 import { Lesson, LessonItem, Profile } from "@/types";
 import { X, ArrowLeft } from "lucide-react";
 
@@ -50,6 +51,7 @@ import ExpandableButton from "@/components/ui/expandable-button.tsx";
 export default function EditLesson() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { schoolId } = useUser();
 
   // Handling props via state parameters originating from the useNavigate in LessonsTable.tsx
   const location = useLocation();
@@ -227,6 +229,7 @@ export default function EditLesson() {
       `
       )
       .eq("id", lessonId)
+      .eq("school_id", schoolId)
       .single();
 
     if (error) {
@@ -282,16 +285,16 @@ export default function EditLesson() {
             variant="ghost"
             size="icon"
             onClick={() => navigate(-1)}
-            className="mr-2 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800"
+            className="mr-2 hover:bg-slate-100"
             aria-label="Go back">
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <h1 className="text-3xl font-bold tracking-tight dark:text-slate-100">
+          <h1 className="text-3xl font-bold tracking-tight">
             Modifica Lezione
           </h1>
           {lesson && lesson.id && (
             <Badge
-              className="ml-2 mt-1.5 dark:border-slate-700 dark:text-slate-100"
+              className="ml-2 mt-1.5"
               variant="outline">
               {lesson.id}
             </Badge>
@@ -300,7 +303,7 @@ export default function EditLesson() {
       </div>
 
       <div className="grid grid-cols-1 gap-4">
-        <Card className="dark:border-slate-700 dark:bg-black-900">
+        <Card>
           <CardHeader />
           <CardContent className="mb-4">
             <div className="flex flex-row items-center justify-between">
@@ -316,10 +319,10 @@ export default function EditLesson() {
                   />
                 )}
                 <div className="flex flex-col ml-8">
-                  <span className="font-medium dark:text-slate-100">
+                  <span className="font-medium">
                     Utente
                   </span>
-                  <span className="text-sm dark:text-slate-300">
+                  <span className="text-sm">
                     {profile?.nome_utente || "N/A"}
                   </span>
                   <div className="mt-1"></div>
@@ -353,10 +356,10 @@ export default function EditLesson() {
               <div className="flex flex-col items-center "></div>
               {/* Section 3: Lesson count */}
               <div className="flex flex-col items-center mr-12">
-                <span className="text-3xl font-bold dark:text-slate-100">
+                <span className="text-3xl font-bold">
                   {lessonsCount || 0}
                 </span>
-                <span className="text-xs dark:text-slate-400">
+                <span className="text-xs">
                   Lezioni totali
                 </span>
               </div>
@@ -365,10 +368,10 @@ export default function EditLesson() {
         </Card>
 
         <div className="grid grid-cols-2 gap-4">
-          <Card className="dark:border-slate-700 dark:bg-black-900">
+          <Card>
             <CardHeader>
-              <CardTitle className="dark:text-slate-100">Data</CardTitle>
-              <CardDescription className="dark:text-slate-400">
+              <CardTitle>Data</CardTitle>
+              <CardDescription>
                 Data e durata della lezione
               </CardDescription>
             </CardHeader>
@@ -383,10 +386,10 @@ export default function EditLesson() {
             </CardContent>
           </Card>
 
-          <Card className="dark:border-slate-700 dark:bg-black-900">
+          <Card>
             <CardHeader>
-              <CardTitle className="dark:text-slate-100">Contenuto</CardTitle>
-              <CardDescription className="dark:text-slate-400">
+              <CardTitle>Contenuto</CardTitle>
+              <CardDescription>
                 Temi e argomenti
               </CardDescription>
             </CardHeader>
@@ -394,14 +397,14 @@ export default function EditLesson() {
               <Command
                 onKeyDown={handleKeyDown}
                 className="overflow-visible bg-transparent select-none">
-                <div className="group border border-input dark:border-slate-700 rounded-md px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+                <div className="group border border-input rounded-md px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
                   <div className="flex flex-wrap gap-1">
                     {selected.map((item) => {
                       return (
                         <Badge
                           key={item.id}
                           variant="secondary"
-                          className="text-md dark:bg-black-800 dark:text-slate-100 dark:hover:bg-slate-700">
+                          className="text-md">
                           {item.id} - {item.title}
                           <button
                             className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
@@ -415,7 +418,7 @@ export default function EditLesson() {
                               e.stopPropagation();
                             }}
                             onClick={() => handleUnselect(item)}>
-                            <X className="h-3 w-3 text-muted-foreground hover:text-foreground dark:text-slate-400 dark:hover:text-slate-100" />
+                            <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
                           </button>
                         </Badge>
                       );
@@ -438,14 +441,14 @@ export default function EditLesson() {
                           }
                         }
                       }}
-                      className="ml-2 flex-1 bg-transparent outline-none placeholder:text-muted-foreground dark:text-slate-100 dark:placeholder:text-slate-400 no-select no-keyboard-mobile"
+                      className="ml-2 flex-1 bg-transparent outline-none placeholder:text-muted-foreground no-select no-keyboard-mobile"
                     />
                   </div>
                 </div>
                 <div className="relative mt-2">
                   <CommandList>
                     {open && availableItems.length > 0 ? (
-                      <div className="absolute top-0 z-10 w-full rounded-md border dark:border-slate-700 bg-popover dark:bg-black-900 text-popover-foreground shadow-md outline-none animate-in">
+                      <div className="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
                         <CommandGroup className="h-[250px] overflow-auto select-none">
                           {availableItems
                             .filter(
@@ -468,7 +471,7 @@ export default function EditLesson() {
                                       item.id
                                     );
                                   }}
-                                  className="cursor-pointer dark:text-slate-100 dark:hover:bg-slate-800 dark:aria-selected:bg-slate-800 select-none">
+                                  className="cursor-pointer select-none">
                                   {item.id} - {item.title}
                                 </CommandItem>
                               );

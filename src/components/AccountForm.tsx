@@ -29,7 +29,7 @@ function LicenseThumbnail({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="relative flex items-center justify-center w-full h-36 bg-slate-200 dark:bg-black-800 rounded-md overflow-hidden">
+    <div className="relative flex items-center justify-center w-full h-36 bg-slate-200 rounded-md overflow-hidden">
       {licenseUrl ? (
         <>
           <Dialog>
@@ -40,7 +40,7 @@ function LicenseThumbnail({
                   alt="Driving License"
                   className="w-full h-full object-contain"
                 />
-                <div className="absolute bottom-2 right-2 bg-white/80 dark:bg-black-800/80 p-1.5 rounded-full opacity-70 group-hover:opacity-100 transition-opacity">
+                <div className="absolute bottom-2 right-2 bg-white/80 p-1.5 rounded-full opacity-70 group-hover:opacity-100 transition-opacity">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -51,7 +51,7 @@ function LicenseThumbnail({
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="text-slate-700 dark:text-slate-200">
+                    className="text-slate-700">
                     <path d="m15 3 6 6m-6-6v6h6"></path>
                     <path d="M10 21H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path>
                     <path d="M21 13v8"></path>
@@ -70,7 +70,7 @@ function LicenseThumbnail({
           </Dialog>
         </>
       ) : (
-        <div className="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400">
+        <div className="flex flex-col items-center justify-center text-slate-500">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="32"
@@ -160,7 +160,7 @@ export default function AccountForm() {
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-3xl font-bold tracking-tight dark:text-slate-100">
+        <h1 className="text-3xl font-bold tracking-tight">
           Benvenuto
         </h1>
       </div>
@@ -170,7 +170,7 @@ export default function AccountForm() {
           checked={isEditMode}
           onCheckedChange={setIsEditMode}
         />
-        <Label htmlFor="edit-mode" className="dark:text-slate-100">
+        <Label htmlFor="edit-mode">
           Modifica profilo
         </Label>
       </div>
@@ -181,7 +181,7 @@ export default function AccountForm() {
           <Button
             variant="outline"
             size="sm"
-            className="dark:bg-white dark:text-green-900 dark:border-green-700 dark:hover:bg-slate-100"
+            className="dark:text-green-900 dark:border-green-700"
             onClick={() => setShowConfirmAlert(false)}>
             Chiudi
           </Button>
@@ -189,9 +189,9 @@ export default function AccountForm() {
       )}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {/* Avatar Card */}
-        <Card className="dark:border-slate-700 dark:bg-black-900 flex flex-col">
+        <Card className="flex flex-col">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 dark:text-slate-100">
+            <CardTitle className="flex items-center gap-2">
               Il tuo profilo
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -203,21 +203,21 @@ export default function AccountForm() {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-muted-foreground dark:text-slate-400">
+                className="text-muted-foreground">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
                 <circle cx="9" cy="7" r="4"></circle>
                 <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
                 <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
               </svg>
             </CardTitle>
-            <CardDescription className="dark:text-slate-400">
+            <CardDescription>
               La tua patente di guida
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center flex-grow">
             <Avatar className="h-36 w-36 mb-4">
               <AvatarImage src={avatarUrl || ""} />
-              <AvatarFallback className="dark:bg-black-800 dark:text-slate-400">
+              <AvatarFallback>
                 {getInitials(nomeUtente || "")}
               </AvatarFallback>
             </Avatar>
@@ -225,11 +225,11 @@ export default function AccountForm() {
           <CardFooter className="mt-auto">
             {isEditMode && (
               <div className="mt-4 w-full">
-                <Label htmlFor="avatar" className="dark:text-slate-100">
+                <Label htmlFor="avatar">
                   Cambia avatar
                 </Label>
                 <div className="mt-1 relative">
-                  <div className="relative rounded-md border border-slate-200 dark:border-slate-700 bg-transparent">
+                  <div className="relative rounded-md border border-slate-200 bg-transparent">
                     <Input
                       id="avatar"
                       type="file"
@@ -239,9 +239,7 @@ export default function AccountForm() {
                         file:rounded-l-md file:border-0
                         file:text-sm file:font-semibold
                         file:bg-slate-50 file:text-slate-700
-                        dark:file:bg-slate-800 dark:file:text-slate-100
-                        dark:bg-transparent
-                        hover:file:bg-slate-100 dark:hover:file:bg-slate-700
+                        hover:file:bg-slate-100
                         disabled:opacity-50 disabled:cursor-not-allowed
                         ${uploadingAvatar ? "opacity-50" : ""}
                       `}
@@ -251,7 +249,7 @@ export default function AccountForm() {
                   </div>
                   {uploadingAvatar && (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full dark:border-slate-100"></div>
+                      <div className="animate-spin h-5 w-5 border-2 border-primary border-t-transparent rounded-full"></div>
                     </div>
                   )}
                 </div>
@@ -261,9 +259,9 @@ export default function AccountForm() {
         </Card>
 
         {/* License Card */}
-        <Card className="dark:border-slate-700 dark:bg-black-900 flex flex-col">
+        <Card className="flex flex-col">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 dark:text-slate-100">
+            <CardTitle className="flex items-center gap-2">
               Patente di Guida
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -275,14 +273,14 @@ export default function AccountForm() {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-muted-foreground dark:text-slate-400">
+                className="text-muted-foreground">
                 <rect width="18" height="12" x="3" y="6" rx="2" />
                 <path d="M3 10h18" />
                 <path d="M7 15h.01" />
                 <path d="M11 15h2" />
               </svg>
             </CardTitle>
-            <CardDescription className="dark:text-slate-400">
+            <CardDescription>
               La tua patente di guida
             </CardDescription>
           </CardHeader>
@@ -290,7 +288,7 @@ export default function AccountForm() {
             <LicenseThumbnail licenseUrl={licenseUrl}>
               {uploadingLicense && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                  <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full dark:border-white"></div>
+                  <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full"></div>
                 </div>
               )}
             </LicenseThumbnail>
@@ -298,11 +296,11 @@ export default function AccountForm() {
           {isEditMode && (
             <CardFooter className="mt-auto">
               <div className="mt-4 w-full">
-                <Label htmlFor="license" className="dark:text-slate-100">
+                <Label htmlFor="license">
                   Carica patente
                 </Label>
                 <div className="mt-1 relative">
-                  <div className="relative rounded-md border border-slate-200 dark:border-slate-700 bg-transparent">
+                  <div className="relative rounded-md border border-slate-200 bg-transparent">
                     <Input
                       id="license"
                       type="file"
@@ -312,9 +310,7 @@ export default function AccountForm() {
                         file:rounded-l-md file:border-0
                         file:text-sm file:font-semibold
                         file:bg-slate-50 file:text-slate-700
-                        dark:file:bg-slate-800
-                        dark:bg-transparent
-                        hover:file:bg-slate-100 dark:hover:file:bg-slate-700
+                        hover:file:bg-slate-100
                         disabled:opacity-50 disabled:cursor-not-allowed
                         ${uploadingLicense ? "opacity-50" : ""}
                       `}
@@ -329,9 +325,9 @@ export default function AccountForm() {
         </Card>
 
         {/* User Data Card */}
-        <Card className="dark:border-slate-700 dark:bg-black-900 flex flex-col">
+        <Card className="flex flex-col">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 dark:text-slate-100">
+            <CardTitle className="flex items-center gap-2">
               Dati utente
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -343,7 +339,7 @@ export default function AccountForm() {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-muted-foreground dark:text-slate-400">
+                className="text-muted-foreground">
                 <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
                 <circle cx="12" cy="7" r="4"></circle>
               </svg>
@@ -351,7 +347,7 @@ export default function AccountForm() {
           </CardHeader>
           <CardContent className="space-y-4 flex-grow">
             <div className="space-y-2">
-              <Label htmlFor="email" className="dark:text-slate-100">
+              <Label htmlFor="email">
                 Email
               </Label>
               <Input
@@ -359,11 +355,10 @@ export default function AccountForm() {
                 type="text"
                 value={user?.email || ""}
                 disabled
-                className="dark:bg-black-800"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="nome_utente" className="dark:text-slate-100">
+              <Label htmlFor="nome_utente">
                 Nome Completo
               </Label>
               <Input
@@ -372,14 +367,14 @@ export default function AccountForm() {
                 value={nomeUtente || ""}
                 disabled={!isEditMode}
                 onChange={(e) => setNomeUtente(e.target.value)}
-                className="dark:bg-black-800  dark:border-slate-700 disabled:opacity-50"
+                className="disabled:opacity-50"
               />
             </div>
           </CardContent>
           {isEditMode && (
             <CardFooter className="mt-auto">
               <Button
-                className="w-full dark:bg-white dark:text-slate-900 dark:border-slate-200 dark:hover:bg-slate-100"
+                className="w-full"
                 onClick={() =>
                   updateProfile({
                     nome_utente: nomeUtente as any,

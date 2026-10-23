@@ -90,7 +90,7 @@ export function DataTable<TData, TValue>({
     <div>
       {searchColumn && (
         <div className="flex justify-between items-center py-4">
-          <h1 className="text-2xl font-bold tracking-tight dark:text-slate-100">
+          <h1 className="text-2xl font-bold tracking-tight">
             Utenti
           </h1>
           <div className="relative max-w-sm">
@@ -111,22 +111,22 @@ export function DataTable<TData, TValue>({
               placeholder={searchPlaceholder}
               value={globalFilter}
               onChange={(e) => setGlobalFilter(e.target.value)}
-              className="pl-8 max-w-sm text-base dark:bg-black-900 dark:text-slate-100 dark:placeholder:text-slate-400 dark:border-slate-700"
+              className="pl-8 max-w-sm text-base"
             />
           </div>
         </div>
       )}
-      <div className="rounded-md border dark:border-slate-700">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="dark:border-slate-700">
+              <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
                       key={header.id}
                       onClick={header.column.getToggleSortingHandler()}
-                      className="cursor-pointer hover:bg-gray-100 dark:text-slate-100 text-base font-medium">
+                      className="cursor-pointer hover:bg-gray-100 text-base font-medium">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -150,11 +150,11 @@ export function DataTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                   onClick={() => navigate(`/user-edit/${row.original.id}`)}
-                  className="dark:border-slate-700">
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className="dark:text-slate-100 text-base cursor-pointer">
+                      className="text-base cursor-pointer">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -167,7 +167,7 @@ export function DataTable<TData, TValue>({
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center dark:text-slate-400 text-base">
+                  className="h-24 text-center text-base">
                   Nessun risultato.
                 </TableCell>
               </TableRow>

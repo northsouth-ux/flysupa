@@ -47,18 +47,18 @@ export default function Login() {
   };
 
   return (
-    <section className="dark:bg-black">
+    <section>
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <Card className="w-full md:max-w-md dark:bg-gray-900 dark:border-gray-800">
+        <Card className="w-full md:max-w-md">
           <CardHeader>
-            <CardTitle className="text-xl text-center md:text-2xl dark:text-white">
+            <CardTitle className="text-xl text-center md:text-2xl">
               Accedi / Registra <br /> Scuola Guida Lugano
             </CardTitle>
           </CardHeader>
           <CardContent>
             <form className="space-y-4 md:space-y-6" onSubmit={handleLogin}>
               <div className="space-y-2">
-                <Label htmlFor="email" className="dark:text-white">Mail</Label>
+                <Label htmlFor="email">Mail</Label>
                 <Input
                   required
                   type="email"
@@ -66,23 +66,21 @@ export default function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@company.com"
-                  className="dark:bg-gray-800 dark:text-white dark:border-gray-700 dark:placeholder:text-gray-400 dark:focus:border-gray-600 dark:focus:ring-gray-600"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password" className="dark:text-white">Password</Label>
+                <Label htmlFor="password">Password</Label>
                 <Input
                   type="password"
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="dark:bg-gray-800 dark:text-white dark:border-gray-700 dark:placeholder:text-gray-400 dark:focus:border-gray-600 dark:focus:ring-gray-600"
                 />
               </div>
-              <Button 
-                type="submit" 
-                className="w-full dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600" 
+              <Button
+                type="submit"
+                className="w-full"
                 disabled={loading}
               >
                 {loading ? "Caricamento..." : "Log In"}
@@ -90,11 +88,11 @@ export default function Login() {
             </form>
           </CardContent>
           <CardFooter className="flex justify-between">
-            <p className="text-sm text-muted-foreground dark:text-gray-400">
+            <p className="text-sm text-muted-foreground">
               Non hai ancora un account?
             </p>
             <Link to="/register">
-              <Button variant="link" className="p-0 font-bold dark:text-white dark:hover:text-gray-300">
+              <Button variant="link" className="p-0 font-bold">
                 Registrati
               </Button>
             </Link>
@@ -103,11 +101,11 @@ export default function Login() {
         
         {/* Display error alert when there's an error */}
         {error && (
-          <Card className="w-full md:max-w-md mt-4 dark:bg-gray-900 dark:border-gray-800">
+          <Card className="w-full md:max-w-md mt-4">
             <Alert variant="destructive" className="dark:bg-red-900 dark:border-red-800">
-              <Terminal className="h-4 w-4 dark:text-white" />
-              <AlertTitle className="dark:text-white">Attenzione</AlertTitle>
-              <AlertDescription className="dark:text-gray-200">{error}</AlertDescription>
+              <Terminal className="h-4 w-4" />
+              <AlertTitle>Attenzione</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
             </Alert>
           </Card>
         )}

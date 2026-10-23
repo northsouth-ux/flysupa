@@ -1,13 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Cloud instance
+// Env-driven config (never hardcode keys in source).
+// Values come from .env.local — see .env.example.
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-const supabaseUrl = 'https://lctywkbjskclilxtfiux.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjdHl3a2Jqc2tjbGlseHRmaXV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYzNDk5OTcsImV4cCI6MjA1MTkyNTk5N30.WCW4abo8wTdE0WNad16BJcBYq15D1NLjlhHIyP_Kr0I';
-
-// Local Instance
-
-// const supabaseUrl = 'http://127.0.0.1:54321';
-// const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0';
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    'Missing Supabase configuration. Copy .env.example to .env.local and set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.'
+  )
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)

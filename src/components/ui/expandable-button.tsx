@@ -221,7 +221,7 @@ export default function ExpandableButton({
         <div className="space-y-2">
           <label
             htmlFor="date-time"
-            className="text-sm font-medium dark:text-slate-300">
+            className="text-sm font-medium">
             Data & Ora
           </label>
           <DateTimePicker
@@ -235,13 +235,13 @@ export default function ExpandableButton({
         <div className="space-y-2">
           <label
             htmlFor="hours"
-            className="text-sm font-medium dark:text-slate-300">
+            className="text-sm font-medium">
             Totale Ore
           </label>
           <Input
             id="hours"
             type="number"
-            className="dark:bg-black-800 dark:text-slate-400 dark:border-slate-700 max-w-[100px]"
+            className="max-w-[100px]"
             value={amountHours}
             onChange={(e) => setAmoutHours(e.target.value)}
           />
@@ -251,7 +251,7 @@ export default function ExpandableButton({
           <Button
             onClick={handleClick}
             disabled={isCreating}
-            className="flex items-center justify-center gap-1 dark:bg-white dark:text-slate-900 dark:border-slate-200 dark:hover:bg-slate-100"
+            className="flex items-center justify-center gap-1"
             variant="secondary">
             <Save className="h-4 w-4 mr-1" />
             <span>{isCreating ? "Salvando..." : "Salva Modifiche"}</span>
@@ -266,7 +266,7 @@ export default function ExpandableButton({
         <Button
           onClick={handleClick}
           disabled={isCreating}
-          className="flex items-center justify-center gap-1 h-8 dark:bg-white dark:text-slate-900 dark:border-slate-200 dark:hover:bg-slate-100"
+          className="flex items-center justify-center gap-1 h-8"
           size="sm"
           variant="secondary">
           {isExpanded ? (
@@ -296,7 +296,7 @@ export default function ExpandableButton({
             />
             <Input
               type="number"
-              className="dark:bg-black-800 dark:text-slate-400 dark:border-slate-700 max-w-[60px]"
+              className="max-w-[60px]"
               value={amountHours}
               onChange={(e) => setAmoutHours(e.target.value)}
             />

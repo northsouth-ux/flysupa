@@ -2,9 +2,43 @@ import { ReactNode } from "react";
 
 // Common interfaces for FlySupa application
 
+// ============================================================
+// Tenant / School types
+// ============================================================
+
+export type SchoolRole = "owner" | "admin" | "instructor" | "student";
+
+export interface School {
+  id: string;
+  name: string;
+  slug: string;
+  created_at: string;
+  owner_id: string;
+}
+
+export interface SchoolMember {
+  id: string;
+  user_id: string;
+  school_id: string;
+  role: SchoolRole;
+  created_at: string;
+}
+
+export interface Invite {
+  id: string;
+  school_id: string;
+  token: string;
+  role: SchoolRole;
+  created_by: string;
+  created_at: string;
+  expires_at: string;
+  used_at: string | null;
+  used_by: string | null;
+}
+
 // User related interfaces
 export interface User {
-  nomeUtente: ReactNode;
+  nomeUtente?: ReactNode;
   id: string;
   email: string;
   total_hours: number;
@@ -19,6 +53,8 @@ export interface Profile {
   sensibilizzazione?: boolean;
   soccorritori?: boolean;
   phone?: string;
+  cognome_utente?: string;
+  date_of_birth?: string;
   licenza_date?: string;
   full_avatar_url?: string;
   avatar_url?: string;
@@ -28,6 +64,8 @@ export interface Profile {
   website?: string | null;
   updated_at?: string;
   days_difference?: number;
+  school_id?: string | null;
+  role?: SchoolRole;
 }
 
 // Lesson related interfaces
@@ -85,6 +123,16 @@ export interface UserContextType {
   totalHours: number | null;
   isAdmin: boolean | null;
 
+  // School / tenant data
+  school: School | null;
+  schoolId: string | null;
+  schoolRole: SchoolRole | null;
+  platformAdmin: boolean | null;
+  profileComplete: boolean;
+  userSchools: { school: School; role: SchoolRole }[];
+  switchSchool: (schoolId: string) => Promise<void>;
+  createInvite: (role?: SchoolRole) => Promise<string>;
+
   // Boolean flags
   loading: boolean;
   isLoadingHours: boolean;
@@ -107,6 +155,7 @@ export interface UserContextType {
   updateProfile: (profile: Profile) => Promise<void>;
   downloadAndSetUserAvatar: (path: string) => Promise<string | undefined>;
   refetchTotalHours: () => Promise<void>;
+  registerSchool: (schoolName: string, slug: string) => Promise<void>;
 }
 
 // Global interfaces

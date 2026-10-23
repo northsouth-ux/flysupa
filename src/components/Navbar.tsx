@@ -33,7 +33,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function Navbar() {
   const navigate = useNavigate();
-  const { user, email, avatarUrl, isAdmin, nomeUtente } = useUser();
+  const { user, email, avatarUrl, isAdmin, nomeUtente, school, platformAdmin, userSchools, switchSchool } = useUser();
   const { theme, setTheme } = useTheme();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -52,7 +52,6 @@ export default function Navbar() {
   // Toggle fullscreen mode
   const toggleFullscreen = () => {
     if (!isFullscreen) {
-      // Enter fullscreen
       if (document.documentElement.requestFullscreen) {
         document.documentElement
           .requestFullscreen()
@@ -63,7 +62,6 @@ export default function Navbar() {
           );
       }
     } else {
-      // Exit fullscreen
       if (document.exitFullscreen) {
         document
           .exitFullscreen()
@@ -85,20 +83,43 @@ export default function Navbar() {
 
   return (
     <div className="container pt-6 space-y-6">
-      <nav className="flex items-center justify-between p-4 bg-card rounded-lg border shadow-md dark:bg-transparent dark:border-slate-700 dark:shadow-none">
+      <nav className="flex items-center justify-between p-4 bg-card rounded-lg border shadow-md">
         <div className="flex items-center gap-4">
-          <Link
-            className="font-semibold text-foreground dark:text-slate-100 hover:text-primary transition-colors"
-            to="/home">
-            Scuola Guida Lugano
-          </Link>
+          {school && (
+            <Badge className="bg-orange-500 hover:bg-orange-600 text-white text-sm px-3 py-1 rounded-full font-medium">
+              {school.name}
+            </Badge>
+          )}
 
-          {isAdmin && (
+          {(isAdmin || platformAdmin) && (
             <div className="flex items-center gap-2 ml-4">
+              {platformAdmin && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate("/platform-admin")}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="mr-1">
+                    <path d="M2 13a5 5 0 0 0 5 5h1a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v4z"></path>
+                    <path d="M22 13a5 5 0 0 1-5 5h-1a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v4z"></path>
+                    <path d="M10 2h4v4h-4z"></path>
+                    <path d="M2 8h20v2H2z"></path>
+                  </svg>
+                  Piattaforma
+                </Button>
+              )}
               <Button
                 variant="outline"
                 size="sm"
-                className="dark:bg-white dark:text-slate-900 dark:border-slate-200 dark:hover:bg-slate-100"
                 onClick={() => navigate("/home")}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -120,7 +141,29 @@ export default function Navbar() {
               <Button
                 variant="outline"
                 size="sm"
-                className="dark:bg-white dark:text-slate-900 dark:border-slate-200 dark:hover:bg-slate-100"
+                onClick={() => navigate("/school-admin")}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="mr-1">
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                Dashboard
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => navigate("/users")}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -151,7 +194,6 @@ export default function Navbar() {
               variant="ghost"
               size="icon"
               onClick={toggleFullscreen}
-              className="dark:bg-white dark:text-slate-900 dark:border-slate-200 dark:hover:bg-slate-100"
               title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}>
               {isFullscreen ? (
                 <Minimize className="h-5 w-5" />
@@ -166,7 +208,6 @@ export default function Navbar() {
               variant="ghost"
               size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="dark:bg-white dark:text-slate-900 dark:border-slate-200 dark:hover:bg-slate-100"
               title={
                 theme === "dark"
                   ? "Switch to light mode"
@@ -179,45 +220,74 @@ export default function Navbar() {
               )}
               <span className="sr-only">Toggle theme</span>
             </Button>
-            {isAdmin ? (
+            {platformAdmin && (
               <Badge
                 variant={"outline"}
-                className="dark:border-slate-700 dark:text-slate-100">
+                className="dark:border-amber-700 dark:text-amber-100 border-amber-500 text-amber-700">
+                Platform owner
+              </Badge>
+            )}
+            {isAdmin ? (
+              <Badge variant={"outline"}>
                 Admin
               </Badge>
             ) : null}
+
+            {/* School Switcher Dropdown */}
+            {userSchools.length > 1 && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    Scuola: {school?.name || "..."}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Cambia scuola</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {userSchools.map((s) => (
+                    <DropdownMenuItem
+                      key={s.school.id}
+                      onClick={() => switchSchool(s.school.id)}
+                      className={s.school.id === school?.id ? "font-bold" : ""}
+                    >
+                      {s.school.name}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="relative h-12 w-12 rounded-full p-0 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100">
+                  className="relative h-12 w-12 rounded-full p-0">
                   <Avatar className="h-12 w-12">
                     <AvatarImage src={avatarUrl || ""} alt={email || "User"} />
-                    <AvatarFallback className="dark:bg-black-800 dark:text-slate-100">
+                    <AvatarFallback>
                       {getInitials(email || "")}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
-                className="w-56 dark:bg-black-900"
+                className="w-56"
                 align="end"
                 forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none dark:text-slate-100">
+                    <p className="text-sm font-medium leading-none">
                       {nomeUtente}
                     </p>
-                    <p className="text-xs leading-none text-muted-foreground dark:text-slate-400">
+                    <p className="text-xs leading-none text-muted-foreground">
                       {email}
                     </p>
                   </div>
                 </DropdownMenuLabel>
-                <DropdownMenuSeparator className="dark:bg-black-700" />
+                <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                   <DropdownMenuItem
-                    asChild
-                    className="dark:focus:bg-slate-800 dark:text-slate-100">
+                    asChild>
                     <Link to="/home">
                       <Home className="mr-2 h-4 w-4" />
                       <span>Home</span>
@@ -226,8 +296,7 @@ export default function Navbar() {
 
                   {isAdmin && (
                     <DropdownMenuItem
-                      asChild
-                      className="dark:focus:bg-slate-800 dark:text-slate-100">
+                      asChild>
                       <Link to="/users">
                         <Users className="mr-2 h-4 w-4" />
                         <span>Lista utenti</span>
@@ -236,8 +305,7 @@ export default function Navbar() {
                   )}
 
                   <DropdownMenuItem
-                    asChild
-                    className="dark:focus:bg-slate-800 dark:text-slate-100">
+                    asChild>
                     <Link to="/account">
                       <User className="mr-2 h-4 w-4" />
                       <span>Account</span>
@@ -245,8 +313,7 @@ export default function Navbar() {
                   </DropdownMenuItem>
 
                   <DropdownMenuItem
-                    asChild
-                    className="dark:focus:bg-slate-800 dark:text-slate-100">
+                    asChild>
                     <Link to="/payments">
                       <CreditCard className="mr-2 h-4 w-4" />
                       <span>Pagamenti</span>
@@ -254,18 +321,17 @@ export default function Navbar() {
                   </DropdownMenuItem>
 
                   <DropdownMenuItem
-                    asChild
-                    className="dark:focus:bg-slate-800 dark:text-slate-100">
+                    asChild>
                     <Link to="/faq">
                       <HelpCircle className="mr-2 h-4 w-4" />
                       <span>FAQs</span>
                     </Link>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
-                <DropdownMenuSeparator className="dark:bg-black-700" />
+                <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => signOutUser(navigate)}
-                  className="text-red-500 focus:text-red-500 dark:text-red-400 dark:focus:text-red-400 dark:focus:bg-slate-800">
+                  className="text-red-500 focus:text-red-500">
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Esci</span>
                 </DropdownMenuItem>

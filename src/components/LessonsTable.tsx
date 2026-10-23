@@ -600,18 +600,18 @@ export default function LessonsTable({
     <>
       <ExpandableButton profileId={profile?.id} refetch={refetchLessons} />
       <Table>
-        <TableCaption className="dark:text-slate-400">
+        <TableCaption>
           Lezioni registrate per {profile?.nome_utente}
         </TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className="dark:text-slate-100">Data</TableHead>
-            <TableHead className="dark:text-slate-100">Ora</TableHead>
-            <TableHead className="dark:text-slate-100">Ore/Lez.</TableHead>
-            <TableHead className="text-right dark:text-slate-100">
+            <TableHead>Data</TableHead>
+            <TableHead>Ora</TableHead>
+            <TableHead>Ore/Lez.</TableHead>
+            <TableHead className="text-right">
               Argomenti
             </TableHead>
-            <TableHead className="text-right dark:text-slate-100">
+            <TableHead className="text-right">
               Azioni
             </TableHead>
           </TableRow>
@@ -622,11 +622,11 @@ export default function LessonsTable({
               <React.Fragment key={lesson.id}>
                 <TableRow
                   className={clsx(
-                    "dark:border-slate-700 cursor-pointer",
-                    expandedRows[lesson.id] && "bg-muted dark:bg-black-800/50"
+                    "cursor-pointer",
+                    expandedRows[lesson.id] && "bg-muted"
                   )}
                   onClick={() => toggleRowExpansion(lesson.id)}>
-                  <TableCell className="dark:text-slate-100 max-w-[100%]">
+                  <TableCell className="max-w-[100%]">
                     <div className="flex items-center">
                       <span className="mr-2">
                         {expandedRows[lesson.id] ? (
@@ -644,13 +644,13 @@ export default function LessonsTable({
                       ) : (
                         <Badge
                           variant={"outline"}
-                          className="dark:border-slate-600 dark:text-slate-100">
+                          className="">
                           tbd
                         </Badge>
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="dark:text-slate-100">
+                  <TableCell>
                     {lesson.time ? (
                       new Date(`1970-01-01T${lesson.time}`).toLocaleTimeString(
                         "default",
@@ -663,7 +663,7 @@ export default function LessonsTable({
                     ) : (
                       <Badge
                         variant={"outline"}
-                        className="dark:border-slate-600 dark:text-slate-100">
+                        className="">
                         tbd
                       </Badge>
                     )}
@@ -672,15 +672,15 @@ export default function LessonsTable({
                   <TableCell>
                     <Badge
                       variant={"outline"}
-                      className="dark:border-slate-600 dark:text-slate-100">
+                      className="">
                       {lesson.amount_hours}h
                     </Badge>
                   </TableCell>
 
-                  <TableCell className="text-right dark:text-slate-100">
+                  <TableCell className="text-right">
                     {lesson.details && lesson.details.length > 0 ? (
                       <>
-                        <span className="text-xs text-muted-foreground dark:text-slate-400">
+                        <span className="text-xs text-muted-foreground">
                           {lesson.details.length} argomenti
                         </span>
                       </>
@@ -694,7 +694,7 @@ export default function LessonsTable({
                       <Button
                         variant="secondary"
                         size="sm"
-                        className="mr-2 dark:bg-white dark:text-slate-900 dark:border-slate-200 dark:hover:bg-slate-100"
+                        className="mr-2"
                         onClick={() =>
                           navigate(`/edit-lesson/${lesson?.id}`, {
                             state: {
@@ -719,7 +719,7 @@ export default function LessonsTable({
                       <Button
                         variant="destructive"
                         size="sm"
-                        className="dark:text-slate-900 dark:border-slate-200 dark:hover:bg-slate-100"
+                        className=""
                         onClick={(e) => {
                           e.stopPropagation();
                           setLessonToDelete({
@@ -749,11 +749,11 @@ export default function LessonsTable({
 
                 {/* Expanded content row */}
                 {expandedRows[lesson.id] && (
-                  <TableRow className="dark:border-slate-700 dark:bg-black-800/20">
+                  <TableRow>
                     <TableCell colSpan={5} className="py-2">
-                      <div className="ml-2 dark:border-slate-700 py-2">
+                      <div className="ml-2 py-2">
                         <div className="flex justify-between items-center mb-2">
-                          <h4 className="text-sm font-medium dark:text-slate-100">
+                          <h4 className="text-sm font-medium">
                             Dettagli argomenti
                           </h4>
                         </div>
@@ -769,12 +769,12 @@ export default function LessonsTable({
                                   <div
                                     key={index}
                                     className={clsx(
-                                      "flex items-center bg-muted p-2 rounded dark:bg-black-800 cursor-pointer transition-all",
+                                      "flex items-center bg-muted p-2 rounded cursor-pointer transition-all",
                                       updating ===
                                         `${lesson.id}-${detail.lesson_item_id}` &&
                                         "opacity-50",
                                       !updating &&
-                                        "hover:bg-slate-200 dark:hover:bg-slate-700"
+                                        "hover:bg-slate-200"
                                     )}
                                     onClick={() =>
                                       updateCompletionDegree(
@@ -787,7 +787,7 @@ export default function LessonsTable({
                                       className={clsx(
                                         "mr-2",
                                         !detail.completion_degree &&
-                                          "bg-[#aeaeae] dark:bg-white dark:text-slate-900",
+                                          "bg-[#aeaeae]",
                                         detail.completion_degree ===
                                           "Trained" &&
                                           "bg-orange-500 dark:bg-orange-400",
@@ -797,12 +797,12 @@ export default function LessonsTable({
                                       )}>
                                       {detail.lesson_item_id}
                                     </Badge>
-                                    <span className="text-xs truncate dark:text-slate-300">
+                                    <span className="text-xs truncate">
                                       {detail.title || "Argomento"}
                                     </span>
                                     {updating ===
                                     `${lesson.id}-${detail.lesson_item_id}` ? (
-                                      <span className="ml-auto text-xs animate-pulse dark:text-slate-400">
+                                      <span className="ml-auto text-xs animate-pulse">
                                         Updating...
                                       </span>
                                     ) : (
@@ -835,8 +835,7 @@ export default function LessonsTable({
                           <Button
                             size="icon"
                             variant="outline"
-                            className="flex w-full items-center bg-muted p-2 rounded bg-gray-400 text-white
-                            dark:bg-white dark:text-black cursor-pointer transition-all"
+                            className="flex w-full items-center bg-muted p-2 rounded bg-gray-400 text-white cursor-pointer transition-all"
                             onClick={(e) => {
                               e.stopPropagation();
                               openAddItemDialog(lesson.id);
@@ -855,7 +854,7 @@ export default function LessonsTable({
             <TableRow>
               <TableCell
                 colSpan={5}
-                className="text-center dark:text-slate-400">
+                className="text-center">
                 Nessuna lezione disponibile
               </TableCell>
             </TableRow>
@@ -865,12 +864,12 @@ export default function LessonsTable({
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="sm:max-w-md dark:bg-black-900 dark:border-slate-700">
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="dark:text-slate-100">
+            <DialogTitle>
               Conferma eliminazione
             </DialogTitle>
-            <DialogDescription className="dark:text-slate-400">
+            <DialogDescription>
               Sei sicuro di voler cancellare la lezione {lessonToDelete?.id}?
             </DialogDescription>
           </DialogHeader>
@@ -879,13 +878,13 @@ export default function LessonsTable({
               type="button"
               variant="secondary"
               onClick={() => setIsDeleteDialogOpen(false)}
-              className="dark:bg-white dark:text-slate-900 dark:border-slate-200 dark:hover:bg-slate-100">
+              className="">
               Annulla
             </Button>
             <Button
               type="button"
               variant="destructive"
-              className="dark:bg-red-600 dark:text-white dark:hover:bg-red-700"
+              className="dark:bg-red-600 dark:hover:bg-red-700"
               onClick={() => {
                 if (lessonToDelete) {
                   deleteLesson(lessonToDelete.id, lessonToDelete.profileId);
@@ -900,12 +899,12 @@ export default function LessonsTable({
 
       {/* Add Item Dialog */}
       <Dialog open={isAddItemOpen} onOpenChange={setIsAddItemOpen}>
-        <DialogContent className="sm:max-w-4xl dark:bg-black-900 dark:border-slate-700">
+        <DialogContent className="sm:max-w-4xl">
           <DialogHeader>
-            <DialogTitle className="dark:text-slate-100">
+            <DialogTitle>
               Aggiungi Argomenti
             </DialogTitle>
-            <DialogDescription className="dark:text-slate-400">
+            <DialogDescription>
               Seleziona uno o più argomenti da aggiungere alla lezione.
               <span className="block mt-1 text-amber-500 dark:text-amber-400 text-sm">
                 Gli argomenti già "Trained" (arancione) o "Mastered" (verde)
@@ -918,7 +917,7 @@ export default function LessonsTable({
             <Command
               onKeyDown={handleKeyDown}
               className="overflow-visible bg-transparent select-none">
-              <div className="group border border-input dark:border-slate-700 rounded-md px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+              <div className="group border border-input rounded-md px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
                 <CommandPrimitive.Input
                   ref={inputRef}
                   value={inputValue}
@@ -937,14 +936,14 @@ export default function LessonsTable({
                       }
                     }
                   }}
-                  className="flex-1 bg-transparent outline-none placeholder:text-muted-foreground dark:text-slate-100 dark:placeholder:text-slate-400 no-select no-keyboard-mobile"
+                  className="flex-1 bg-transparent outline-none placeholder:text-muted-foreground no-select no-keyboard-mobile"
                 />
               </div>
               <div className="relative mt-2">
                 <CommandList>
                   {isItemListOpen && availableItems.length > 0 ? (
-                    <div className="absolute top-0 z-10 w-full rounded-md border dark:border-slate-700 bg-popover dark:bg-black-900 text-popover-foreground shadow-md outline-none animate-in">
-                      <div className="flex divide-x dark:divide-slate-700">
+                    <div className="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
+                      <div className="flex divide-x">
                         {/* LEFT COLUMN - Items with completion status */}
                         <div className="w-1/2">
                           <CommandGroup className="h-[350px] overflow-auto select-none">
@@ -957,7 +956,7 @@ export default function LessonsTable({
                                   .includes(inputValue.toLowerCase()) &&
                                 item.inCurrentLesson
                             ) && (
-                              <div className="py-2 px-2 text-xs font-medium text-muted-foreground dark:text-slate-400 border-b dark:border-slate-700">
+                              <div className="py-2 px-2 text-xs font-medium text-muted-foreground border-b">
                                 Argomenti già assegnati in questa lezione
                               </div>
                             )}
@@ -980,7 +979,7 @@ export default function LessonsTable({
                                     e.preventDefault();
                                     e.stopPropagation();
                                   }}
-                                  className="cursor-pointer dark:text-slate-100 dark:hover:bg-slate-800 dark:aria-selected:bg-slate-800 select-none">
+                                  className="cursor-pointer select-none">
                                   <div className="flex items-center w-full">
                                     <span>
                                       {item.id} - {item.title}
@@ -1040,7 +1039,7 @@ export default function LessonsTable({
                                 !item.completion_degree &&
                                 !selected.some((s) => s.id === item.id)
                             ) && (
-                              <div className="py-2 px-2 text-xs font-medium text-muted-foreground dark:text-slate-400 border-t border-b dark:border-slate-700">
+                              <div className="py-2 px-2 text-xs font-medium text-muted-foreground border-t border-b">
                                 Argomenti presenti in altre lezioni
                               </div>
                             )}
@@ -1098,7 +1097,7 @@ export default function LessonsTable({
                                     );
                                     // The associateItemToLesson function now updates the UI directly
                                   }}
-                                  className="cursor-pointer dark:text-slate-100 dark:hover:bg-slate-800 dark:aria-selected:bg-slate-800 select-none">
+                                  className="cursor-pointer select-none">
                                   <div className="flex items-center w-full">
                                     <span>
                                       {item.id} - {item.title}
@@ -1139,7 +1138,7 @@ export default function LessonsTable({
                         {/* RIGHT COLUMN - Only unassigned items (no completion status) */}
                         <div className="w-1/2">
                           <CommandGroup className="h-[350px] overflow-auto select-none">
-                            <div className="py-2 px-2 text-xs font-medium text-muted-foreground dark:text-slate-400 border-b dark:border-slate-700">
+                            <div className="py-2 px-2 text-xs font-medium text-muted-foreground border-b">
                               Argomenti disponibili senza stato
                             </div>
 
@@ -1171,7 +1170,7 @@ export default function LessonsTable({
                                       );
                                       // The associateItemToLesson function now updates the UI directly
                                     }}
-                                    className="cursor-pointer dark:text-slate-100 dark:hover:bg-slate-800 dark:aria-selected:bg-slate-800 select-none">
+                                    className="cursor-pointer select-none">
                                     {item.id} - {item.title}
                                   </CommandItem>
                                 );
@@ -1191,7 +1190,7 @@ export default function LessonsTable({
               type="button"
               variant="outline"
               onClick={() => setIsAddItemOpen(false)}
-              className="dark:bg-white dark:text-slate-900 dark:border-slate-200 dark:hover:bg-slate-100">
+              className="">
               Chiudi
             </Button>
           </DialogFooter>
@@ -1209,7 +1208,7 @@ export function NoLessons({
   profileId: string;
 }) {
   return (
-    <div className="text-left py-4 text-muted-foreground dark:text-slate-400">
+    <div className="text-left py-4 text-muted-foreground">
       <ExpandableButton profileId={profileId} refetch={refetchLessons} />
     </div>
   );

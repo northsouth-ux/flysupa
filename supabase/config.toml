@@ -94,12 +94,8 @@ file_size_limit = "50MiB"
 # [storage.image_transformation]
 # enabled = true
 
-# Uncomment to configure local storage buckets
-[storage.buckets.images]
-public = false
-file_size_limit = "50MiB"
-allowed_mime_types = ["image/png", "image/jpeg"]
-objects_path = "./images"
+# Local storage buckets (avatars, licenses) are created by the migration SQL.
+# No static local buckets needed here.
 
 [auth]
 enabled = true

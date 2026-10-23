@@ -32,7 +32,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 // License Thumbnail Component
 function LicenseThumbnail({ licenseUrl }: { licenseUrl: string | null }) {
   return (
-    <div className="relative flex items-center justify-center w-full h-28 bg-slate-200 dark:bg-black-800 rounded-md overflow-hidden">
+    <div className="relative flex items-center justify-center w-full h-28 bg-slate-200 rounded-md overflow-hidden">
       {licenseUrl ? (
         <Dialog>
           <DialogTrigger asChild>
@@ -42,7 +42,7 @@ function LicenseThumbnail({ licenseUrl }: { licenseUrl: string | null }) {
                 alt="Driving License"
                 className="w-full h-full object-contain"
               />
-              <div className="absolute bottom-2 right-2 bg-white/80 dark:bg-black-800/80 p-1.5 rounded-full opacity-70 group-hover:opacity-100 transition-opacity">
+              <div className="absolute bottom-2 right-2 bg-white/80 p-1.5 rounded-full opacity-70 group-hover:opacity-100 transition-opacity">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="14"
@@ -53,7 +53,7 @@ function LicenseThumbnail({ licenseUrl }: { licenseUrl: string | null }) {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="text-slate-700 dark:text-slate-200">
+                  className="text-slate-700">
                   <path d="m15 3 6 6m-6-6v6h6"></path>
                   <path d="M10 21H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7"></path>
                   <path d="M21 13v8"></path>
@@ -71,7 +71,7 @@ function LicenseThumbnail({ licenseUrl }: { licenseUrl: string | null }) {
           </DialogContent>
         </Dialog>
       ) : (
-        <div className="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400">
+        <div className="flex flex-col items-center justify-center text-slate-500">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -96,7 +96,7 @@ function LicenseThumbnail({ licenseUrl }: { licenseUrl: string | null }) {
 
 export default function UserEditForm() {
   const { id } = useParams<{ id: string }>(); // Get user ID from URL
-  const { refetchTotalHours, downloadAndSetUserAvatar } = useUser(); // Add downloadAndSetUserAvatar
+  const { refetchTotalHours, downloadAndSetUserAvatar, schoolId, isAdmin } = useUser(); // Add downloadAndSetUserAvatar
   const [profile, setProfile] = useState<Profile | null>(null);
   const [licenseUrl, setLicenseUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -105,6 +105,12 @@ export default function UserEditForm() {
   const [lessons, setLessons] = useState<Lesson[]>([]); // Initialize as an empty array
   const [loadingLessons, setLoadingLessons] = useState(true); //Initialize as 0
   const [lessonsCount, setLessonsCount] = useState<number>(0); // Initialize as 0
+  // Create lesson form state
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [newLessonTitle, setNewLessonTitle] = useState("");
+  const [newLessonDate, setNewLessonDate] = useState(new Date().toISOString().split("T")[0]);
+  const [newLessonTime, setNewLessonTime] = useState("10:00");
+  const [newLessonHours, setNewLessonHours] = useState(1);
 
   // Profile fields that we want to display in our table
   const fieldDisplayNames: { [key: string]: string } = {
@@ -196,53 +202,17 @@ export default function UserEditForm() {
   const fetchProfileLessons = async (id: string) => {
     try {
       setLoadingLessons(true);
-      const response = await fetch(
-        `${
-          import.meta.env.VITE_SUPABASE_URL
-        }/rest/v1/lessons?profile_id=eq.${id}&order=date.asc`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-          },
-        }
-      );
+      let query = supabase
+        .from("lessons")
+        .select("*")
+        .eq("profile_id", id);
+      if (schoolId) query = query.eq("school_id", schoolId);
+      const { data, error } = await query.order("date", { ascending: true });
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch lessons");
-      }
+      if (error) throw error;
 
-      const lessonsData: Lesson[] = await response.json();
-
-      // Fetch lesson details for each lesson
-      const detailedLessons = await Promise.all(
-        lessonsData.map(async (lesson) => {
-          const detailsResponse = await fetch(
-            `${
-              import.meta.env.VITE_SUPABASE_URL
-            }/rest/v1/lesson_item_details_view?lesson_id=eq.${lesson.id}`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-                apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-              },
-            }
-          );
-
-          if (!detailsResponse.ok) {
-            console.warn(`Failed to fetch details for lesson ${lesson.id}`);
-            return lesson; // Return the lesson without additional details if fetch fails
-          }
-
-          const details = await detailsResponse.json();
-          return { ...lesson, details }; // Assign all details instead of just details[0]
-        })
-      );
-
-      setLessons(detailedLessons);
-      setLessonsCount(detailedLessons.length); // Update lessonsCount
+      setLessons(data || []);
+      setLessonsCount(data?.length || 0);
     } catch (err) {
       console.error("Error fetching lessons:", err);
     } finally {
@@ -321,60 +291,45 @@ export default function UserEditForm() {
     }
   };
 
-  // Update the createLesson function
-  // const createLesson = async (id: string) => {
-  //   const lessonData = {
-  //     profile_id: id,
-  //     amount_hours: 1,
-  //   };
-  //   try {
-  //     const response = await fetch(
-  //       `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/lessons`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-  //           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-  //         },
-  //         body: JSON.stringify(lessonData),
-  //       }
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error("Failed to create lesson");
-  //     }
-
-  //     // Refetch lessons
-  //     await fetchProfileLessons(id);
-  //   } catch (err: unknown) {
-  //     setError(err instanceof Error ? err.message : "An error occurred");
-  //   }
-  // };
-
-  // Update the deleteLesson function similarly
-  const deleteLesson = async (id: string, profileId: string) => {
+  const createLesson = async (profileId: string) => {
+    if (!schoolId) return;
+    setLoading(true);
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/lessons?id=eq.${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to delete lesson");
-      }
-
-      // Refetch lessons
+      const { error } = await supabase.from("lessons").insert({
+        profile_id: profileId,
+        school_id: schoolId,
+        title: newLessonTitle,
+        date: newLessonDate,
+        time: newLessonTime,
+        amount_hours: newLessonHours,
+      });
+      if (error) throw error;
+      // Reset form
+      setNewLessonTitle("");
+      setNewLessonDate(new Date().toISOString().split("T")[0]);
+      setNewLessonTime("10:00");
+      setNewLessonHours(1);
+      setShowCreateForm(false);
+      // Refetch
       await fetchProfileLessons(profileId);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+    } catch (err: any) {
+      setError(err.message || "Failed to create lesson");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteLesson = async (lessonId: string, profileId: string) => {
+    try {
+      const { error } = await supabase
+        .from("lessons")
+        .delete()
+        .eq("id", lessonId)
+        .eq("school_id", schoolId);
+      if (error) throw error;
+      await fetchProfileLessons(profileId);
+    } catch (err: any) {
+      setError(err.message || "Failed to delete lesson");
     }
   };
 
@@ -398,7 +353,7 @@ export default function UserEditForm() {
             variant="outline"
             size="sm"
             onClick={() => setShowConfirmAlert(false)}
-            className="dark:bg-white dark:text-green-900 dark:border-green-700 dark:hover:bg-green-50">
+            className="dark:text-green-900 dark:border-green-700 dark:hover:bg-green-50">
             Chiudi
           </Button>
         </div>
@@ -406,7 +361,7 @@ export default function UserEditForm() {
 
       <div className="flex flex-col lg:flex-row gap-6">
         {/* User data card */}
-        <Card className="w-full lg:w-1/3 dark:border-slate-700 dark:bg-black-900">
+        <Card className="w-full lg:w-1/3">
           <CardHeader>
             <div className="flex flex-row items-center gap-4">
               <div>
@@ -419,7 +374,7 @@ export default function UserEditForm() {
                 />
               </div>
               <div>
-                <CardTitle className="flex items-center gap-2 dark:text-slate-100">
+                <CardTitle className="flex items-center gap-2">
                   Dati utente
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -431,12 +386,12 @@ export default function UserEditForm() {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="text-muted-foreground dark:text-slate-400">
+                    className="text-muted-foreground">
                     <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
                   </svg>
                 </CardTitle>
-                <CardDescription className="dark:text-slate-400">
+                <CardDescription>
                   Modifica le informazioni del profilo utente
                 </CardDescription>
               </div>
@@ -447,21 +402,20 @@ export default function UserEditForm() {
             <div className="grid gap-4">
               <div className="gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="dark:text-slate-100">
+                  <Label htmlFor="email">
                     Email
                   </Label>
                   <Input
                     id="email"
                     value={profile?.email || ""}
                     disabled
-                    className="dark:bg-black-800 dark:text-slate-400 dark:border-slate-700"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="phone" className="dark:text-slate-100">
+                  <Label htmlFor="phone">
                     Telefono
                   </Label>
                   <Input
@@ -469,11 +423,10 @@ export default function UserEditForm() {
                     value={profile?.phone || ""}
                     onChange={(e) => handleFieldChange("phone", e.target.value)}
                     placeholder="+41"
-                    className="dark:bg-black-800 dark:text-black dark:placeholder:text-slate-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="nome_utente" className="dark:text-slate-100">
+                  <Label htmlFor="nome_utente">
                     Nome Completo
                   </Label>
                   <Input
@@ -482,14 +435,13 @@ export default function UserEditForm() {
                     onChange={(e) =>
                       handleFieldChange("nome_utente", e.target.value)
                     }
-                    className="dark:bg-black-800 dark:text-black dark:border-slate-700"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <div>
-                  <Label htmlFor="licenza_date" className="dark:text-slate-100">
+                  <Label htmlFor="licenza_date">
                     Rilascio Lic. Allievo Conducente (LAC)
                   </Label>
                 </div>
@@ -509,8 +461,8 @@ export default function UserEditForm() {
             {/* Status and License row */}
             <div className="flex flex-col md:flex-row gap-4">
               {/* Checkboxes section */}
-              <div className="border rounded-lg p-4 space-y-4 flex-1 dark:border-slate-700">
-                <h3 className="text-lg font-medium dark:text-slate-100">
+              <div className="border rounded-lg p-4 space-y-4 flex-1">
+                <h3 className="text-lg font-medium">
                   Certificazioni
                 </h3>
 
@@ -523,9 +475,8 @@ export default function UserEditForm() {
                       onCheckedChange={(checked) =>
                         handleFieldChange("admin", checked)
                       }
-                      className="dark:border-slate-600"
                     />
-                    <Label htmlFor="admin" className="dark:text-slate-100">
+                    <Label htmlFor="admin">
                       Amministratore
                     </Label>
                   </div> */}
@@ -537,11 +488,9 @@ export default function UserEditForm() {
                       onCheckedChange={(checked) =>
                         handleFieldChange("sensibilizzazione", checked)
                       }
-                      className="dark:border-slate-600"
                     />
                     <Label
-                      htmlFor="sensibilizzazione"
-                      className="dark:text-slate-100">
+                      htmlFor="sensibilizzazione">
                       Sensibilizzazione
                     </Label>
                   </div>
@@ -553,11 +502,9 @@ export default function UserEditForm() {
                       onCheckedChange={(checked) =>
                         handleFieldChange("soccorritori", checked)
                       }
-                      className="dark:border-slate-600"
                     />
                     <Label
-                      htmlFor="soccorritori"
-                      className="dark:text-slate-100">
+                      htmlFor="soccorritori">
                       Soccorritori
                     </Label>
                   </div>
@@ -565,8 +512,8 @@ export default function UserEditForm() {
               </div>
 
               {/* License section */}
-              <div className="border rounded-lg p-4 space-y-2 flex-1 dark:border-slate-700">
-                <h3 className="text-lg font-medium dark:text-slate-100">
+              <div className="border rounded-lg p-4 space-y-2 flex-1">
+                <h3 className="text-lg font-medium">
                   Patente
                 </h3>
                 <LicenseThumbnail licenseUrl={licenseUrl} />
@@ -577,35 +524,42 @@ export default function UserEditForm() {
             <Button
               onClick={updateProfile}
               disabled={loading}
-              className="w-full dark:bg-white dark:text-slate-900 dark:border-slate-200 dark:hover:bg-slate-100">
+              className="w-full">
               {loading ? "Salvando..." : "Salva Profilo"}
             </Button>
           </CardFooter>
         </Card>
 
         {/* Lessons card */}
-        <Card className="w-full lg:w-2/3 dark:border-slate-700 dark:bg-black-900">
+        <Card className="w-full lg:w-2/3">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 dark:text-slate-100">
-              Lezioni
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-muted-foreground dark:text-slate-400">
-                <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
-                <line x1="16" x2="16" y1="2" y2="6"></line>
-                <line x1="8" x2="8" y1="2" y2="6"></line>
-                <line x1="3" x2="21" y1="10" y2="10"></line>
-              </svg>
-            </CardTitle>
-            <CardDescription className="dark:text-slate-400">
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                Lezioni
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-muted-foreground">
+                  <rect width="18" height="18" x="3" y="4" rx="2" ry="2"></rect>
+                  <line x1="16" x2="16" y1="2" y2="6"></line>
+                  <line x1="8" x2="8" y1="2" y2="6"></line>
+                  <line x1="3" x2="21" y1="10" y2="10"></line>
+                </svg>
+              </CardTitle>
+              {isAdmin && (
+                <Button size="sm" onClick={() => setShowCreateForm(true)}>
+                  Crea
+                </Button>
+              )}
+            </div>
+            <CardDescription>
               Elenco delle lezioni registrate per questo utente
             </CardDescription>
           </CardHeader>
@@ -628,15 +582,70 @@ export default function UserEditForm() {
           </CardContent>
           <CardFooter className="flex justify-start">
             <div className="flex items-center gap-2">
-              <div className="text-sm text-muted-foreground dark:text-slate-400">
+              <div className="text-sm text-muted-foreground">
                 Totale ore:{" "}
-                <span className="font-medium dark:text-slate-100">
+                <span className="font-medium">
                   {/* {profile?.total_hours || 0} */}
                 </span>
               </div>
             </div>
           </CardFooter>
         </Card>
+
+        {/* Create Lesson Dialog */}
+        <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
+          <DialogContent className="sm:max-w-md">
+            <CardHeader className="px-0 pt-0">
+              <CardTitle>Aggiungi Lezione</CardTitle>
+              <CardDescription>Data, ora e durata della nuova lezione</CardDescription>
+            </CardHeader>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="lesson-title">Titolo</Label>
+                <Input
+                  id="lesson-title"
+                  value={newLessonTitle}
+                  onChange={(e) => setNewLessonTitle(e.target.value)}
+                  placeholder="es. Guida in città"
+                />
+              </div>
+              <div>
+                <Label htmlFor="lesson-hours">Ore</Label>
+                <Input
+                  id="lesson-hours"
+                  type="number"
+                  min={1}
+                  max={8}
+                  value={newLessonHours}
+                  onChange={(e) => setNewLessonHours(Number(e.target.value))}
+                />
+              </div>
+              <div>
+                <Label htmlFor="lesson-date">Data</Label>
+                <Input
+                  id="lesson-date"
+                  type="date"
+                  value={newLessonDate}
+                  onChange={(e) => setNewLessonDate(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label htmlFor="lesson-time">Ora</Label>
+                <Input
+                  id="lesson-time"
+                  type="time"
+                  value={newLessonTime}
+                  onChange={(e) => setNewLessonTime(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end pt-4">
+              <Button onClick={() => createLesson(id!)} disabled={loading}>
+                {loading ? "Salvando..." : "Crea Lezione"}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
