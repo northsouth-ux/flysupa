@@ -17,5 +17,8 @@ else
   supabase start
 fi
 
+echo "📊 Supabase Studio: http://127.0.0.1:54323"
+open http://127.0.0.1:54323
+
 echo "▶️  Vite: http://localhost:5173"
 exec vite
