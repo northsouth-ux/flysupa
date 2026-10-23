@@ -122,16 +122,14 @@ export default function SchoolAdmin() {
 
     setStudentLoading(true);
     try {
-      await createStudent({
+      const newStudentId = await createStudent({
         nome_utente: studentForm.nome_utente.trim(),
         cognome_utente: studentForm.cognome_utente.trim(),
         email: studentForm.email.trim() || undefined,
         phone: studentForm.phone.trim() || undefined,
         licenza_date: studentForm.licenza_date || undefined,
       });
-      setStudentForm(emptyForm);
-      setStudentSaved(true);
-      fetchStats();
+      navigate(`/user-edit/${newStudentId}`);
     } catch (err: any) {
       setStudentError(
         err?.message ?? "Errore durante la creazione dello studente."

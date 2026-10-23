@@ -153,7 +153,7 @@ export default function Navbar() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => navigate("/school-admin")}>
+                onClick={() => navigate("/dashboard")}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"

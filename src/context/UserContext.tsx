@@ -222,20 +222,25 @@ export function UserProvider({ children }: { children: ReactNode }) {
       email?: string;
       phone?: string;
       licenza_date?: string;
-    }): Promise<void> => {
+    }): Promise<string> => {
       if (!schoolId || !user?.id) throw new Error("No school or user");
 
-      const { error } = await supabase.from("profiles").insert({
-        school_id: schoolId,
-        nome_utente: student.nome_utente,
-        cognome_utente: student.cognome_utente,
-        email: student.email || null,
-        phone: student.phone || null,
-        licenza_date: student.licenza_date || null,
-        is_student: true,
-      });
+      const { data, error } = await supabase
+        .from("profiles")
+        .insert({
+          school_id: schoolId,
+          nome_utente: student.nome_utente,
+          cognome_utente: student.cognome_utente,
+          email: student.email || null,
+          phone: student.phone || null,
+          licenza_date: student.licenza_date || null,
+          is_student: true,
+        })
+        .select("id")
+        .single();
 
       if (error) throw error;
+      return data.id;
     },
     [schoolId, user]
   );

@@ -134,7 +134,7 @@ export interface UserContextType {
     email?: string;
     phone?: string;
     licenza_date?: string;
-  }) => Promise<void>;
+  }) => Promise<string>;
 
   // Boolean flags
   loading: boolean;
