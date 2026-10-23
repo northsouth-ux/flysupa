@@ -16,6 +16,7 @@ import {
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface DateTimePickerProps {
+  id?: string;
   lessonId?: string;
   date?: Date;
   setDate?: (date: Date) => void;
@@ -37,6 +38,7 @@ interface DateTimePickerProps {
  */
 
 export function DateTimePicker({
+  id,
   lessonId,
   date: externalDate,
   setDate: setExternalDate,
@@ -235,6 +237,7 @@ export function DateTimePicker({
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button
+          id={id}
           variant="outline"
           className={cn(
             "border-slate-300 flex flex-row justify-start font-normal text-sm",

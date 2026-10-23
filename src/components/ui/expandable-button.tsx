@@ -243,7 +243,7 @@ export default function ExpandableButton({
             type="number"
             className="max-w-[100px]"
             value={amountHours}
-            onChange={(e) => setAmoutHours(e.target.value)}
+            onChange={(e) => setAmoutHours(Number(e.target.value))}
           />
         </div>
 
@@ -298,7 +298,7 @@ export default function ExpandableButton({
               type="number"
               className="max-w-[60px]"
               value={amountHours}
-              onChange={(e) => setAmoutHours(e.target.value)}
+              onChange={(e) => setAmoutHours(Number(e.target.value))}
             />
           </div>
           <Button

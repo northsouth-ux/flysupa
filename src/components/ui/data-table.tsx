@@ -149,7 +149,7 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  onClick={() => navigate(`/user-edit/${row.original.id}`)}
+                  onClick={() => navigate(`/user-edit/${(row.original as any).id}`)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell

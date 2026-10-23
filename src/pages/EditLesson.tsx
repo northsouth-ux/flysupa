@@ -235,8 +235,11 @@ export default function EditLesson() {
     if (error) {
       console.error("Error fetching profile data:", error);
     } else {
-      setProfile(profileData.profiles as Profile);
-      getAvatarUrl(profileData.profiles.avatar_url);
+      const profile = (profileData as any)?.profiles as Profile;
+      setProfile(profile);
+      if (profile?.avatar_url) {
+        getAvatarUrl(profile.avatar_url);
+      }
     }
   }
 
@@ -454,7 +457,7 @@ export default function EditLesson() {
                             .filter(
                               (item) => !selected.some((s) => s.id === item.id)
                             )
-                            .sort((a, b) => a.id - b.id)
+                            .sort((a, b) => Number(a.id) - Number(b.id))
                             .map((item) => {
                               return (
                                 <CommandItem
