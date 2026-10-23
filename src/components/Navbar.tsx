@@ -37,6 +37,18 @@ export default function Navbar() {
   const { theme, setTheme } = useTheme();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  // Environment + branch for the badge (left of the fullscreen toggle)
+  const envName: string =
+    (import.meta.env.VITE_APP_ENV as string | undefined) ||
+    (import.meta.env.DEV ? "development" : "production");
+  const branch: string = __GIT_BRANCH__ || "unknown";
+  const envBadgeClass =
+    envName === "production"
+      ? "bg-red-600 text-white"
+      : envName === "test"
+        ? "bg-amber-500 text-black"
+        : "bg-emerald-600 text-white";
+
   // Check if fullscreen is supported and update state when it changes
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -189,6 +201,18 @@ export default function Navbar() {
 
         {user && (
           <div className="flex items-center gap-4">
+            {/* Env + branch indicator */}
+            <div className="flex items-center gap-1.5">
+              <Badge className={`rounded-md text-xs font-semibold ${envBadgeClass}`}>
+                {envName}
+              </Badge>
+              <Badge
+                variant="outline"
+                className="rounded-md text-xs font-mono text-muted-foreground">
+                {branch}
+              </Badge>
+            </div>
+
             {/* Fullscreen Toggle Button */}
             <Button
               variant="ghost"

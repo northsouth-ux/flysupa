@@ -61,7 +61,7 @@ export function DataTable<TData, TValue>({
   searchPlaceholder = "Cerca...",
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([
-    { id: "total_hours", desc: true }, // Default sorting for 'Licenza scade' column
+    { id: "total_hours", desc: true },
   ]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");

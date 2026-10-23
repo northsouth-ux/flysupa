@@ -326,7 +326,9 @@ export default function EditLesson() {
                     Utente
                   </span>
                   <span className="text-sm">
-                    {profile?.nome_utente || "N/A"}
+                    {[profile?.nome_utente, profile?.cognome_utente]
+                      .filter(Boolean)
+                      .join(" ") || "N/A"}
                   </span>
                   <div className="mt-1"></div>
                   <Badge

@@ -145,6 +145,17 @@ export default function Users() {
       },
     },
     {
+      accessorKey: "nome_utente",
+      header: "Nome",
+      cell: ({ row }) => {
+        const p = row.original;
+        const fullName = [p.nome_utente, p.cognome_utente]
+          .filter(Boolean)
+          .join(" ");
+        return <span className="font-medium">{fullName || "—"}</span>;
+      },
+    },
+    {
       accessorKey: "total_hours",
       header: "Lez.",
       cell: ({ row }) => {
@@ -170,38 +181,6 @@ export default function Users() {
       ),
     },
     {
-      accessorKey: "days_difference",
-      header: "Scade",
-      cell: ({ row }) => {
-        const profile = row.original;
-        if (!profile.licenza_date)
-          return <span>N/A</span>;
-
-        const licenseDate = new Date(profile.licenza_date);
-        const today = new Date();
-        const diffTime = Math.abs(today.getTime() - licenseDate.getTime());
-        const daysLeft = 365 - Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        let badgeVariant: "default" | "warning" | "outline" = "outline";
-
-        if (daysLeft < 90 && daysLeft > 0) {
-          badgeVariant = "warning";
-        } else if (daysLeft <= 0) {
-          badgeVariant = "warning";
-        }
-
-        return (
-          <Badge
-            variant={badgeVariant}
-            className="text-sm dark:bg-[#003d34c7] dark:border-[#009e86] text-white">
-            {daysLeft < 0
-              ? `scaduto da ${Math.abs(daysLeft)} giorni`
-              : `${daysLeft} giorni`}
-          </Badge>
-        );
-      },
-    },
-    {
       accessorKey: "soccorritori",
       header: "SOC",
       cell: ({ row }) =>
@@ -224,13 +203,6 @@ export default function Users() {
             ok
           </Badge>
         ),
-    },
-    {
-      accessorKey: "email",
-      header: "Email",
-      cell: ({ row }) => (
-        <span>{row.original.email}</span>
-      ),
     },
     {
       id: "actions",
