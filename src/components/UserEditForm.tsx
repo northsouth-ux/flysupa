@@ -204,14 +204,25 @@ export default function UserEditForm() {
       setLoadingLessons(true);
       let query = supabase
         .from("lessons")
-        .select("*")
+        .select(
+          "*, lesson_item_associations(lesson_item_id, lessons_items(title))"
+        )
         .eq("profile_id", id);
       if (schoolId) query = query.eq("school_id", schoolId);
       const { data, error } = await query.order("date", { ascending: true });
 
       if (error) throw error;
 
-      setLessons(data || []);
+      // Map the associations embed to the `details` shape the table expects
+      const lessonsWithDetails = (data || []).map((lesson: any) => ({
+        ...lesson,
+        details: (lesson.lesson_item_associations || []).map((a: any) => ({
+          lesson_item_id: a.lesson_item_id,
+          title: a.lessons_items?.title || "Argomento",
+        })),
+      }));
+
+      setLessons(lessonsWithDetails);
       setLessonsCount(data?.length || 0);
     } catch (err) {
       console.error("Error fetching lessons:", err);
