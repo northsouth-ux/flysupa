@@ -59,7 +59,6 @@ const randTime = () => `${pad(int(8, 19))}:${pad(pick([0, 15, 30, 45]))}:00`
 const FIRST = ['Mario', 'Luca', 'Giulia', 'Anna', 'Paolo', 'Sara', 'Marco', 'Elena', 'Davide', 'Chiara', 'Andrea', 'Francesca', 'Simone', 'Valentina', 'Roberto', 'Ilaria', 'Matteo', 'Alessia', 'Stefano', 'Martina']
 const LAST = ['Rossi', 'Bianchi', 'Ferrari', 'Colombo', 'Ricci', 'Greco', 'Romano', 'Gallo', 'Conti', 'Costa', 'Marino', 'Barbieri', 'Fontana', 'Moretti', 'Villa', 'Rizzo', 'Serra', 'Farina', 'Pellegrini', 'Mancini']
 const ITEMS = ['Frenata di emergenza', 'Parcheggio in retro', 'Rotonda', 'Precedenza', 'Sorpasso', 'Guida notturna', 'Autostrada', 'Parcheggio a S', 'Curve', 'Semaforo']
-const DEGREES = ['Trained', 'Mastered']
 
 async function clearSeed() {
   console.log('Clearing existing seed data...')
@@ -154,7 +153,7 @@ async function main() {
       const chosen = new Set()
       while (chosen.size < Math.min(nAssoc, items.length)) chosen.add(items[Math.floor(rand() * items.length)].id)
       for (const itemId of chosen) {
-        assocRows.push({ lesson_id: lesson.id, lesson_item_id: itemId, completion_degree: pick(DEGREES) })
+        assocRows.push({ lesson_id: lesson.id, lesson_item_id: itemId })
       }
     }
     if (assocRows.length) await supabase.from('lesson_item_associations').insert(assocRows)

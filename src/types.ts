@@ -86,11 +86,6 @@ export interface LessonItem {
   title: ReactNode;
   id: string;
   name: string;
-  completion_degree?: string | null;
-  global_completion?: {
-    degree: string | null;
-    lessonId: string | null;
-  };
 }
 
 // Component props interfaces
