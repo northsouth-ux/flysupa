@@ -16,7 +16,8 @@
     "db:start": "supabase start",
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",
-    "seed": "node scripts/seed.mjs"
+    "seed": "node scripts/seed.mjs",
+    "seed:avatars": "node scripts/seed-avatars.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
