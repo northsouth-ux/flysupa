@@ -76,7 +76,11 @@ const AuthRedirect = () => {
       return;
     }
 
-    navigate("/home");
+    // Only redirect to /home from post-login landing pages. On a reload of a
+    // deep link (e.g. /user-edit/:id) the auth listener fires again, so stay put.
+    if (["/", "/account", "/auth/confirm"].includes(location.pathname)) {
+      navigate("/home");
+    }
     setShouldRedirect(false);
   }, [user, schoolId, loading, shouldRedirect, profileComplete, platformAdmin, navigate, setShouldRedirect, location.pathname]);
 
