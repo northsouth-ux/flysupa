@@ -44,9 +44,8 @@ UPDATE profiles SET platform_admin = true WHERE email = 'tua@email.com';
 `npm run dev` punta a **Supabase locale** (http://127.0.0.1:54321) — nessun dato cloud toccato. Prima avvia il database locale:
 
 ```bash
-npm run db:start  # avvia Supabase locale (richiede Docker/colima attivo)
-npm run dev       # Vite su http://localhost:5173 → Supabase locale
-npm run db:reset  # ricrea il DB locale e riapplica la migration
+npm run dev       # avvia tutto: colima + Supabase locale + Vite (http://localhost:5173)
+npm run db:reset  # ricrea il DB locale e riapplica le migrations (+ seed)
 npm run db:stop   # ferma Supabase locale
 ```
 
