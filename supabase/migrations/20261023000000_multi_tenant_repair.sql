@@ -125,7 +125,7 @@ ALTER TABLE public.lessons_items ADD COLUMN IF NOT EXISTS school_id uuid;
 -- 4. Indexes / constraints (idempotent)
 -- =====================================================================
 CREATE UNIQUE INDEX IF NOT EXISTS profiles_email_key ON public.profiles (email);
-CREATE UNIQUE INDEX IF NOT EXISTS lessons_profile_id_idx ON public.lessons (profile_id);
+CREATE INDEX IF NOT EXISTS lessons_profile_id_idx ON public.lessons (profile_id);
 CREATE UNIQUE INDEX IF NOT EXISTS school_members_user_school_idx ON public.school_members (user_id, school_id);
 
 -- FKs on the tenant columns
