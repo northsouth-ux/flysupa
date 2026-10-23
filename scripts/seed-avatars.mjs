@@ -31,7 +31,7 @@ if (!target?.serviceKey) {
 const supabase = createClient(target.url, target.serviceKey)
 console.log(`Seeding avatars for ${env.toUpperCase()} → ${target.url}`)
 
-const STYLE = 'avataaars'
+const STYLE = 'notionists'
 
 async function main() {
   const { data: profiles, error } = await supabase
