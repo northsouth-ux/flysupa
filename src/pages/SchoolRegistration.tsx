@@ -67,12 +67,15 @@ export default function SchoolRegistration() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // ---------- Redirect if not logged in ----------
+  // ---------- Redirect if not logged in, or already has a school ----------
   useEffect(() => {
-    if (!loading && !user) {
+    if (loading) return;
+    if (!user) {
       navigate("/login", { replace: true });
+    } else if (schoolId) {
+      navigate("/home", { replace: true });
     }
-  }, [loading, user, navigate]);
+  }, [loading, user, schoolId, navigate]);
 
   // ---------- Auto‑generate slug when name changes ----------
   const handleNameChange = useCallback(
@@ -132,26 +135,6 @@ export default function SchoolRegistration() {
           <span className="text-sm font-medium">Caricamento…</span>
         </div>
       </div>
-    );
-  }
-
-  // ---------- Already have schools — allow adding more ----------
-  if (schoolId) {
-    return (
-      <section className="flex min-h-[60vh] items-center justify-center px-4">
-        <Card className="w-full max-w-md text-center shadow-lg">
-          <CardHeader>
-            <CardTitle>
-              Crea un&apos;altra autoscuola
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-muted-foreground">
-              Hai già un&apos;autoscuola, ma puoi crearne un&apos;altra qui sotto.
-            </p>
-          </CardContent>
-        </Card>
-      </section>
     );
   }
 
