@@ -65,6 +65,7 @@ export interface Profile {
   updated_at?: string;
   days_difference?: number;
   school_id?: string | null;
+  is_student?: boolean;
   role?: SchoolRole;
 }
 
@@ -132,6 +133,13 @@ export interface UserContextType {
   userSchools: { school: School; role: SchoolRole }[];
   switchSchool: (schoolId: string) => Promise<void>;
   createInvite: (role?: SchoolRole) => Promise<string>;
+  createStudent: (student: {
+    nome_utente: string;
+    cognome_utente: string;
+    email?: string;
+    phone?: string;
+    licenza_date?: string;
+  }) => Promise<void>;
 
   // Boolean flags
   loading: boolean;

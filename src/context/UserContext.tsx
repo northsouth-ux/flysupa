@@ -214,6 +214,32 @@ export function UserProvider({ children }: { children: ReactNode }) {
     [schoolId, user]
   );
 
+  // ---- createStudent: add a student record to the current school ----
+  const createStudent = useCallback(
+    async (student: {
+      nome_utente: string;
+      cognome_utente: string;
+      email?: string;
+      phone?: string;
+      licenza_date?: string;
+    }): Promise<void> => {
+      if (!schoolId || !user?.id) throw new Error("No school or user");
+
+      const { error } = await supabase.from("profiles").insert({
+        school_id: schoolId,
+        nome_utente: student.nome_utente,
+        cognome_utente: student.cognome_utente,
+        email: student.email || null,
+        phone: student.phone || null,
+        licenza_date: student.licenza_date || null,
+        is_student: true,
+      });
+
+      if (error) throw error;
+    },
+    [schoolId, user]
+  );
+
   // ---- switchSchool: change active school ----
   const switchSchool = useCallback(
     async (newSchoolId: string): Promise<void> => {
@@ -387,6 +413,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
         profileComplete: !!nomeUtente,
         registerSchool,
         createInvite,
+        createStudent,
         userSchools,
         switchSchool,
         // Placeholder fields to satisfy the type

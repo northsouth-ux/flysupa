@@ -85,7 +85,8 @@ export default function Users() {
         const { data, error } = await supabase
           .from("profiles")
           .select("*")
-          .eq("school_id", schoolId);
+          .eq("school_id", schoolId)
+          .eq("is_student", true);
 
         if (error) throw error;
 
