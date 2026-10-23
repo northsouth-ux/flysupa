@@ -69,7 +69,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
         setLicenseUrl(null);
         setLoading(false);
       }
-      if (event !== "INITIAL_SESSION") { setShouldRedirect(true); }
+      if (event === "SIGNED_IN") { setShouldRedirect(true); }
     });
 
     return () => {
