@@ -265,19 +265,13 @@ export default function UserEditForm() {
         return acc;
       }, {} as Record<string, any>);
 
-      // Add required fields for upsert
-      const profileData = {
-        ...updates,
-        id, // Make sure ID is included
-        updated_at: new Date().toISOString(),
-      };
-
-      console.log("Updating profile with data:", profileData);
-
-      // Use supabase client with upsert
+      // Update the existing profile row (student records already exist; a plain
+      // UPDATE uses the admin-in-school policy, whereas an upsert trips the
+      // INSERT policy because school_id is absent from the payload).
       const { data, error } = await supabase
         .from("profiles")
-        .upsert(profileData)
+        .update({ ...updates, updated_at: new Date().toISOString() })
+        .eq("id", id)
         .select();
 
       if (error) {
