@@ -93,7 +93,7 @@ export function DataTable<TData, TValue>({
       {searchColumn && (
         <div className="flex justify-between items-center py-4">
           <h1 className="text-2xl font-bold tracking-tight">
-            Utenti
+            Studenti
           </h1>
           <div className="flex items-center gap-3">
             {headerActions}

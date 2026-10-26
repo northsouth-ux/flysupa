@@ -6,7 +6,7 @@ import { ThemeProvider } from "./components/theme-provider"
 import AuthRedirect from "./components/AuthRedirect";
 import Navbar from "./components/Navbar";
 
-import Home from "./pages/Home";
+import Lezioni from "./pages/Lezioni";
 import Login from "./pages/Auth/Login";
 import Check from "./pages/Auth/Check";
 import Users from "./pages/Users";
@@ -17,7 +17,6 @@ import EditLesson from "./pages/EditLesson";
 import ConfirmRegistration from "./pages/Auth/ConfirmRegistration";
 import SchoolRegistration from "./pages/SchoolRegistration";
 import SchoolAdmin from "./pages/SchoolAdmin";
-import CalendarView from "./pages/CalendarView";
 import PlatformAdmin from "./pages/PlatformAdmin";
 import Onboarding from "./pages/Onboarding";
 import Join from "./pages/Join";
@@ -56,8 +55,8 @@ function App() {
           {location.pathname !== "/login" && <Navbar />}
           <div className="p-4 md:p-6">
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/home" element={<Home />} />
+              <Route path="/" element={<Lezioni />} />
+              <Route path="/home" element={<Lezioni />} />
               <Route path="/login" element={<Login />} />
               <Route path="/users" element={<Users />} />
               <Route path="/user-edit/:id" element={<UserEdit />} />
@@ -69,7 +68,6 @@ function App() {
               <Route path="/register-school" element={<SchoolRegistration />} />
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/dashboard" element={<SchoolAdmin />} />
-              <Route path="/calendar" element={<CalendarView />} />
               <Route path="/platform-admin" element={<PlatformAdmin />} />
               <Route path="/join" element={<Join />} />
             </Routes>

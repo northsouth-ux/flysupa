@@ -140,7 +140,7 @@ export default function CalendarView() {
   );
 
   return (
-    <div className="container py-6">
+    <>
       <Card>
         <CardHeader className="space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-4">
@@ -315,6 +315,6 @@ export default function CalendarView() {
           )}
         </CardContent>
       </Card>
-    </div>
+    </>
   );
 }

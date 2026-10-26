@@ -132,7 +132,7 @@ export default function Navbar() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => navigate("/home")}>
+                onClick={() => navigate("/")}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
@@ -147,7 +147,7 @@ export default function Navbar() {
                   <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                   <polyline points="9 22 9 12 15 12 15 22"></polyline>
                 </svg>
-                Home
+                Lezioni
               </Button>
 
               <Button
@@ -170,30 +170,7 @@ export default function Navbar() {
                   <rect x="14" y="14" width="7" height="7"></rect>
                   <rect x="3" y="14" width="7" height="7"></rect>
                 </svg>
-                Dashboard
-              </Button>
-
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate("/calendar")}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="mr-1">
-                  <rect x="3" y="4" width="18" height="18" rx="2"></rect>
-                  <path d="M16 2v4"></path>
-                  <path d="M8 2v4"></path>
-                  <path d="M3 10h18"></path>
-                </svg>
-                Calendario
+                Scuola
               </Button>
 
               <Button
@@ -216,7 +193,7 @@ export default function Navbar() {
                   <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
                   <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                 </svg>
-                Utenti
+                Studenti
               </Button>
             </div>
           )}
@@ -335,9 +312,9 @@ export default function Navbar() {
                 <DropdownMenuGroup>
                   <DropdownMenuItem
                     asChild>
-                    <Link to="/home">
+                    <Link to="/">
                       <Home className="mr-2 h-4 w-4" />
-                      <span>Home</span>
+                      <span>Lezioni</span>
                     </Link>
                   </DropdownMenuItem>
 
@@ -346,7 +323,7 @@ export default function Navbar() {
                       asChild>
                       <Link to="/users">
                         <Users className="mr-2 h-4 w-4" />
-                        <span>Lista utenti</span>
+                        <span>Studenti</span>
                       </Link>
                     </DropdownMenuItem>
                   )}

@@ -264,7 +264,7 @@ export default function Home() {
   const pageNumbers = getPageNumbers();
 
   return (
-    <div className="container py-2 space-y-6">
+    <>
       {user ? (
         isAdmin ? (
           <Card>
@@ -529,6 +529,6 @@ export default function Home() {
       ) : (
         <div>Please log in.</div>
       )}
-    </div>
+    </>
   );
 }
