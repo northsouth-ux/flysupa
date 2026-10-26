@@ -91,6 +91,7 @@ export default function Users() {
   }
 
   useEffect(() => {
+    if (!schoolId) return;
     const fetchProfiles = async () => {
       try {
         const { data, error } = await supabase
@@ -128,7 +129,7 @@ export default function Users() {
     };
 
     fetchProfiles();
-  }, [downloadAndSetUserAvatar, setProfiles]);
+  }, [downloadAndSetUserAvatar, setProfiles, schoolId]);
 
   // ---------- Add student ----------
   const [dialogOpen, setDialogOpen] = useState(false);

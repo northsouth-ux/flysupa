@@ -273,12 +273,16 @@ export default function EditLesson() {
 
   useEffect(() => {
     if (!id) return;
-    fetchProfileFromLessonId(id);
     fetchLessonById(id);
     fetchAvailableItems();
     fetchExistingAssociations(id);
     fetchLessonsCount(id);
   }, [id]);
+
+  useEffect(() => {
+    if (!id || !schoolId) return;
+    fetchProfileFromLessonId(id);
+  }, [id, schoolId]);
 
   return (
     <div className="container mx-auto py-6">
