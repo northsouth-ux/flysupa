@@ -8,6 +8,8 @@ import { X } from "lucide-react";
 import { Plus } from "lucide-react";
 import { Input } from "./input";
 import { Lesson } from "@/types";
+import { supabase } from "@/services/supabaseClient";
+import { useUser } from "@/hooks/useUser";
 
 interface ExpandableButtonProps {
   profileId?: string;
@@ -27,6 +29,8 @@ export default function ExpandableButton({
   lessonId,
   lesson,
 }: ExpandableButtonProps) {
+  const { schoolId } = useUser();
+
   // Debug log to check lesson data
   useEffect(() => {
     if (expanded && lesson) {
@@ -107,28 +111,15 @@ export default function ExpandableButton({
       time: formattedTime,
       profile_id: profileId,
       amount_hours: amountHours,
+      school_id: schoolId,
+      title: "Lezione",
     };
 
-    // POST/Create lesson
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/rest/v1/lessons`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify(lessonData),
-        }
-      );
+      const { error } = await supabase.from("lessons").insert(lessonData);
 
-      if (!response.ok) {
-        throw new Error("Failed to create lesson");
-      }
+      if (error) throw error;
 
-      // ToDo: Refetch lessons
       await refetch(profileId);
     } catch (err: unknown) {
       console.error("Failed to create lesson:", err);
@@ -161,26 +152,13 @@ export default function ExpandableButton({
     };
 
     try {
-      const response = await fetch(
-        `${
-          import.meta.env.VITE_SUPABASE_URL
-        }/rest/v1/lessons?id=eq.${lessonId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          },
-          body: JSON.stringify(lessonData),
-        }
-      );
+      const { error } = await supabase
+        .from("lessons")
+        .update(lessonData)
+        .eq("id", lessonId);
 
-      if (!response.ok) {
-        throw new Error("Failed to update lesson");
-      }
+      if (error) throw error;
 
-      // Refetch lessons
       await refetch(profileId);
     } catch (err: unknown) {
       console.error("Failed to update lesson:", err);
