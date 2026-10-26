@@ -96,7 +96,7 @@ function LicenseThumbnail({ licenseUrl }: { licenseUrl: string | null }) {
 
 export default function UserEditForm() {
   const { id } = useParams<{ id: string }>(); // Get user ID from URL
-  const { refetchTotalHours, downloadAndSetUserAvatar, schoolId, isAdmin } = useUser(); // Add downloadAndSetUserAvatar
+  const { refetchTotalHours, downloadAndSetUserAvatar, schoolId } = useUser(); // Add downloadAndSetUserAvatar
   const [profile, setProfile] = useState<Profile | null>(null);
   const [licenseUrl, setLicenseUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -105,12 +105,6 @@ export default function UserEditForm() {
   const [lessons, setLessons] = useState<Lesson[]>([]); // Initialize as an empty array
   const [loadingLessons, setLoadingLessons] = useState(true); //Initialize as 0
   const [lessonsCount, setLessonsCount] = useState<number>(0); // Initialize as 0
-  // Create lesson form state
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [newLessonTitle, setNewLessonTitle] = useState("");
-  const [newLessonDate, setNewLessonDate] = useState(new Date().toISOString().split("T")[0]);
-  const [newLessonTime, setNewLessonTime] = useState("10:00");
-  const [newLessonHours, setNewLessonHours] = useState(1);
 
   // Profile fields that we want to display in our table
   const fieldDisplayNames: { [key: string]: string } = {
@@ -291,34 +285,6 @@ export default function UserEditForm() {
       setError(
         err instanceof Error ? err.message : "Unknown error updating profile"
       );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const createLesson = async (profileId: string) => {
-    if (!schoolId) return;
-    setLoading(true);
-    try {
-      const { error } = await supabase.from("lessons").insert({
-        profile_id: profileId,
-        school_id: schoolId,
-        title: newLessonTitle,
-        date: newLessonDate,
-        time: newLessonTime,
-        amount_hours: newLessonHours,
-      });
-      if (error) throw error;
-      // Reset form
-      setNewLessonTitle("");
-      setNewLessonDate(new Date().toISOString().split("T")[0]);
-      setNewLessonTime("10:00");
-      setNewLessonHours(1);
-      setShowCreateForm(false);
-      // Refetch
-      await fetchProfileLessons(profileId);
-    } catch (err: any) {
-      setError(err.message || "Failed to create lesson");
     } finally {
       setLoading(false);
     }
@@ -558,11 +524,6 @@ export default function UserEditForm() {
                   <line x1="3" x2="21" y1="10" y2="10"></line>
                 </svg>
               </CardTitle>
-              {isAdmin && (
-                <Button size="sm" onClick={() => setShowCreateForm(true)}>
-                  Crea
-                </Button>
-              )}
             </div>
             <CardDescription>
               Elenco delle lezioni registrate per questo utente
@@ -579,10 +540,7 @@ export default function UserEditForm() {
                 refetchLessons={fetchProfileLessons}
               />
             ) : (
-              <NoLessons
-                profileId={profile?.id as any}
-                refetchLessons={fetchProfileLessons}
-              />
+              <NoLessons />
             )}
           </CardContent>
           <CardFooter className="flex justify-start">
@@ -597,60 +555,6 @@ export default function UserEditForm() {
           </CardFooter>
         </Card>
 
-        {/* Create Lesson Dialog */}
-        <Dialog open={showCreateForm} onOpenChange={setShowCreateForm}>
-          <DialogContent className="sm:max-w-md">
-            <CardHeader className="px-0 pt-0">
-              <CardTitle>Aggiungi Lezione</CardTitle>
-              <CardDescription>Data, ora e durata della nuova lezione</CardDescription>
-            </CardHeader>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="lesson-title">Titolo</Label>
-                <Input
-                  id="lesson-title"
-                  value={newLessonTitle}
-                  onChange={(e) => setNewLessonTitle(e.target.value)}
-                  placeholder="es. Guida in città"
-                />
-              </div>
-              <div>
-                <Label htmlFor="lesson-hours">Ore</Label>
-                <Input
-                  id="lesson-hours"
-                  type="number"
-                  min={1}
-                  max={8}
-                  value={newLessonHours}
-                  onChange={(e) => setNewLessonHours(Number(e.target.value))}
-                />
-              </div>
-              <div>
-                <Label htmlFor="lesson-date">Data</Label>
-                <Input
-                  id="lesson-date"
-                  type="date"
-                  value={newLessonDate}
-                  onChange={(e) => setNewLessonDate(e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="lesson-time">Ora</Label>
-                <Input
-                  id="lesson-time"
-                  type="time"
-                  value={newLessonTime}
-                  onChange={(e) => setNewLessonTime(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="flex justify-end pt-4">
-              <Button onClick={() => createLesson(id!)} disabled={loading}>
-                {loading ? "Salvando..." : "Crea Lezione"}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
       </div>
     </div>
   );

@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { Profile, Lesson, LessonsTableProps, LessonItem } from "@/types";
 import { supabase } from "../services/supabaseClient.tsx";
-import ExpandableButton from "./ui/expandable-button.tsx";
 
 // Shadcn Components
 import { Button } from "@/components/ui/button";
@@ -172,7 +171,6 @@ export default function LessonsTable({
 
   return (
     <>
-      <ExpandableButton profileId={profile?.id} refetch={refetchLessons} />
       <Table>
         <TableCaption>
           Lezioni registrate per {profile?.nome_utente}
@@ -510,16 +508,10 @@ export default function LessonsTable({
   );
 }
 
-export function NoLessons({
-  profileId,
-  refetchLessons,
-}: {
-  refetchLessons: (profileId: string) => Promise<void>;
-  profileId: string;
-}) {
+export function NoLessons() {
   return (
     <div className="text-left py-4 text-muted-foreground">
-      <ExpandableButton profileId={profileId} refetch={refetchLessons} />
+      Nessuna lezione registrata.
     </div>
   );
 }
