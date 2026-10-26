@@ -28,6 +28,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   searchColumn?: string;
   searchPlaceholder?: string;
+  headerActions?: React.ReactNode;
 }
 
 /**
@@ -59,6 +60,7 @@ export function DataTable<TData, TValue>({
   data,
   searchColumn,
   searchPlaceholder = "Cerca...",
+  headerActions,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "total_hours", desc: true },
@@ -93,26 +95,29 @@ export function DataTable<TData, TValue>({
           <h1 className="text-2xl font-bold tracking-tight">
             Utenti
           </h1>
-          <div className="relative max-w-sm">
-            <svg
-              className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          <div className="flex items-center gap-3">
+            {headerActions}
+            <div className="relative max-w-sm">
+              <svg
+                className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+              <Input
+                placeholder={searchPlaceholder}
+                value={globalFilter}
+                onChange={(e) => setGlobalFilter(e.target.value)}
+                className="pl-8 max-w-sm text-base"
               />
-            </svg>
-            <Input
-              placeholder={searchPlaceholder}
-              value={globalFilter}
-              onChange={(e) => setGlobalFilter(e.target.value)}
-              className="pl-8 max-w-sm text-base"
-            />
+            </div>
           </div>
         </div>
       )}

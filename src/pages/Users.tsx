@@ -38,6 +38,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { UserPlus } from "lucide-react";
 
 // Update imports to include our custom Avatar
 import Avatar from "@/components/Avatar";
@@ -52,7 +63,7 @@ const formatDate = (dateStr: string | number | Date) => {
 };
 
 export default function Users() {
-  const { downloadAndSetUserAvatar, schoolId } = useUser();
+  const { downloadAndSetUserAvatar, schoolId, createStudent } = useUser();
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const navigate = useNavigate();
@@ -118,6 +129,54 @@ export default function Users() {
 
     fetchProfiles();
   }, [downloadAndSetUserAvatar, setProfiles]);
+
+  // ---------- Add student ----------
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [studentForm, setStudentForm] = useState({
+    nome_utente: "",
+    cognome_utente: "",
+    email: "",
+    phone: "",
+    licenza_date: "",
+  });
+  const [studentError, setStudentError] = useState<string | null>(null);
+  const [studentLoading, setStudentLoading] = useState(false);
+
+  const handleAddStudent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStudentError(null);
+
+    if (!studentForm.nome_utente.trim() || !studentForm.cognome_utente.trim()) {
+      setStudentError("Nome e cognome sono obbligatori.");
+      return;
+    }
+
+    setStudentLoading(true);
+    try {
+      const newId = await createStudent({
+        nome_utente: studentForm.nome_utente.trim(),
+        cognome_utente: studentForm.cognome_utente.trim(),
+        email: studentForm.email.trim() || undefined,
+        phone: studentForm.phone.trim() || undefined,
+        licenza_date: studentForm.licenza_date || undefined,
+      });
+      setDialogOpen(false);
+      setStudentForm({
+        nome_utente: "",
+        cognome_utente: "",
+        email: "",
+        phone: "",
+        licenza_date: "",
+      });
+      navigate(`/user-edit/${newId}`);
+    } catch (err: any) {
+      setStudentError(
+        err?.message ?? "Errore durante la creazione dello studente."
+      );
+    } finally {
+      setStudentLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -264,10 +323,120 @@ export default function Users() {
             columns={columns}
             data={profiles}
             searchColumn="email"
-            searchPlaceholder="Cerca utenti..."
+            searchPlaceholder="Cerca studenti..."
+            headerActions={
+              <Button onClick={() => setDialogOpen(true)}>
+                <UserPlus className="mr-2 h-4 w-4" />
+                Aggiungi studente
+              </Button>
+            }
           />
         </CardContent>
       </Card>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Aggiungi studente</DialogTitle>
+            <DialogDescription>
+              Crea un nuovo studente (non serve un account — è solo un profilo da
+              monitorare).
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleAddStudent} className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="nome_utente">
+                  Nome <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="nome_utente"
+                  required
+                  placeholder="es. Mario"
+                  value={studentForm.nome_utente}
+                  onChange={(e) =>
+                    setStudentForm((f) => ({ ...f, nome_utente: e.target.value }))
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="cognome_utente">
+                  Cognome <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="cognome_utente"
+                  required
+                  placeholder="es. Rossi"
+                  value={studentForm.cognome_utente}
+                  onChange={(e) =>
+                    setStudentForm((f) => ({
+                      ...f,
+                      cognome_utente: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="student_email">Email</Label>
+                <Input
+                  id="student_email"
+                  type="email"
+                  placeholder="es. mario.rossi@email.com"
+                  value={studentForm.email}
+                  onChange={(e) =>
+                    setStudentForm((f) => ({ ...f, email: e.target.value }))
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="student_phone">Telefono</Label>
+                <Input
+                  id="student_phone"
+                  type="text"
+                  placeholder="+41 (0) XX XXX XX XX"
+                  value={studentForm.phone}
+                  onChange={(e) =>
+                    setStudentForm((f) => ({ ...f, phone: e.target.value }))
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="licenza_date">Data patente</Label>
+                <Input
+                  id="licenza_date"
+                  type="date"
+                  value={studentForm.licenza_date}
+                  className="dark:[color-scheme:dark]"
+                  onChange={(e) =>
+                    setStudentForm((f) => ({
+                      ...f,
+                      licenza_date: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+
+            {studentError && (
+              <p className="text-sm font-medium text-red-600 dark:text-red-400">
+                {studentError}
+              </p>
+            )}
+
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setDialogOpen(false)}>
+                Annulla
+              </Button>
+              <Button type="submit" disabled={studentLoading}>
+                {studentLoading ? "Salvataggio…" : "Aggiungi studente"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

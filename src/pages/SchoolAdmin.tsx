@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "@/hooks/useUser";
 import { supabase } from "@/services/supabaseClient";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -12,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Users, BookOpen, GraduationCap, Calendar, UserPlus } from "lucide-react";
+import { Users, BookOpen, GraduationCap, Calendar } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
 /*  Stat card skeleton                                                  */
@@ -55,7 +53,7 @@ function formatDate(dateStr: string): string {
 /*  Main component                                                      */
 /* ------------------------------------------------------------------ */
 export default function SchoolAdmin() {
-  const { user, school, schoolId, schoolRole, loading, createStudent } =
+  const { user, school, schoolId, schoolRole, loading } =
     useUser();
   const navigate = useNavigate();
 
@@ -63,19 +61,6 @@ export default function SchoolAdmin() {
   const [studentCount, setStudentCount] = useState<string>("...");
   const [instructorCount, setInstructorCount] = useState<string>("...");
   const [lessonCount, setLessonCount] = useState<string>("...");
-
-  // ---------- Add-student form state ----------
-  const emptyForm = {
-    nome_utente: "",
-    cognome_utente: "",
-    email: "",
-    phone: "",
-    licenza_date: "",
-  };
-  const [studentForm, setStudentForm] = useState(emptyForm);
-  const [studentError, setStudentError] = useState<string | null>(null);
-  const [studentLoading, setStudentLoading] = useState(false);
-  const [studentSaved, setStudentSaved] = useState(false);
 
   // ---------- Fetch stats when schoolId is known ----------
   const fetchStats = useCallback(async () => {
@@ -108,36 +93,6 @@ export default function SchoolAdmin() {
   useEffect(() => {
     fetchStats();
   }, [fetchStats]);
-
-  // ---------- Add student handler ----------
-  const handleAddStudent = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStudentError(null);
-    setStudentSaved(false);
-
-    if (!studentForm.nome_utente.trim() || !studentForm.cognome_utente.trim()) {
-      setStudentError("Nome e cognome sono obbligatori.");
-      return;
-    }
-
-    setStudentLoading(true);
-    try {
-      const newStudentId = await createStudent({
-        nome_utente: studentForm.nome_utente.trim(),
-        cognome_utente: studentForm.cognome_utente.trim(),
-        email: studentForm.email.trim() || undefined,
-        phone: studentForm.phone.trim() || undefined,
-        licenza_date: studentForm.licenza_date || undefined,
-      });
-      navigate(`/user-edit/${newStudentId}`);
-    } catch (err: any) {
-      setStudentError(
-        err?.message ?? "Errore durante la creazione dello studente."
-      );
-    } finally {
-      setStudentLoading(false);
-    }
-  };
 
   // ---------- Access control ----------
   if (loading) {
@@ -233,122 +188,6 @@ export default function SchoolAdmin() {
           value={formatDate(school?.created_at ?? "")}
         />
       </div>
-
-      {/* ============ ADD STUDENT ============ */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <UserPlus className="h-5 w-5" />
-            Aggiungi studente
-          </CardTitle>
-          <CardDescription>
-            Crea un nuovo studente (non serve un account — è solo un profilo da
-            monitorare).
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleAddStudent} className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="nome_utente">
-                  Nome <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="nome_utente"
-                  type="text"
-                  required
-                  placeholder="es. Mario"
-                  value={studentForm.nome_utente}
-                  onChange={(e) =>
-                    setStudentForm((f) => ({ ...f, nome_utente: e.target.value }))
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="cognome_utente">
-                  Cognome <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="cognome_utente"
-                  type="text"
-                  required
-                  placeholder="es. Rossi"
-                  value={studentForm.cognome_utente}
-                  onChange={(e) =>
-                    setStudentForm((f) => ({
-                      ...f,
-                      cognome_utente: e.target.value,
-                    }))
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="student_email">Email</Label>
-                <Input
-                  id="student_email"
-                  type="email"
-                  placeholder="es. mario.rossi@email.com"
-                  value={studentForm.email}
-                  onChange={(e) =>
-                    setStudentForm((f) => ({ ...f, email: e.target.value }))
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="student_phone">Telefono</Label>
-                <Input
-                  id="student_phone"
-                  type="text"
-                  placeholder="+41 (0) XX XXX XX XX"
-                  value={studentForm.phone}
-                  onChange={(e) =>
-                    setStudentForm((f) => ({ ...f, phone: e.target.value }))
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="licenza_date">Data patente</Label>
-                <Input
-                  id="licenza_date"
-                  type="date"
-                  value={studentForm.licenza_date}
-                  className="dark:[color-scheme:dark]"
-                  onChange={(e) =>
-                    setStudentForm((f) => ({
-                      ...f,
-                      licenza_date: e.target.value,
-                    }))
-                  }
-                />
-              </div>
-            </div>
-
-            {studentError && (
-              <p className="text-sm font-medium text-red-600 dark:text-red-400">
-                {studentError}
-              </p>
-            )}
-            {studentSaved && (
-              <p className="text-sm font-medium text-green-600 dark:text-green-400">
-                Studente aggiunto con successo.
-              </p>
-            )}
-
-            <div className="flex flex-wrap gap-3">
-              <Button type="submit" disabled={studentLoading}>
-                {studentLoading ? "Salvataggio…" : "Aggiungi studente"}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate("/users")}
-              >
-                Gestisci studenti
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
     </section>
   );
 }
