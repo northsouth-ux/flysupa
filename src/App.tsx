@@ -17,6 +17,7 @@ import EditLesson from "./pages/EditLesson";
 import ConfirmRegistration from "./pages/Auth/ConfirmRegistration";
 import SchoolRegistration from "./pages/SchoolRegistration";
 import SchoolAdmin from "./pages/SchoolAdmin";
+import CalendarView from "./pages/CalendarView";
 import PlatformAdmin from "./pages/PlatformAdmin";
 import Onboarding from "./pages/Onboarding";
 import Join from "./pages/Join";
@@ -68,6 +69,7 @@ function App() {
               <Route path="/register-school" element={<SchoolRegistration />} />
               <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/dashboard" element={<SchoolAdmin />} />
+              <Route path="/calendar" element={<CalendarView />} />
               <Route path="/platform-admin" element={<PlatformAdmin />} />
               <Route path="/join" element={<Join />} />
             </Routes>
