@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "gh pr list --state open --json number,title,baseRefName,isDraft,mergeStateStatus,url || echo 'Could not list PRs: is gh installed and logged in?'"
+          }
+        ]
+      }
+    ]
+  }
+}
