@@ -122,7 +122,9 @@ async function main() {
 
     // 3) owner membership + link admin profile to school
     await must(supabase.from('school_members').insert({ user_id: admin.id, school_id: school.id, role: 'owner' }), 'school member insert')
-    await must(supabase.from('profiles').update({ school_id: school.id, nome_utente: `Admin ${s}` }).eq('id', admin.id), 'admin profile update')
+    const adminProfiles = await must(supabase.from('profiles').update({ school_id: school.id, nome_utente: `Admin ${s}` }).eq('id', admin.id).select(), 'admin profile update')
+    // An update matching 0 rows is not an error: the auth trigger must have created this profile.
+    if (!adminProfiles?.length) throw new Error(`no profile for ${email}: is the on_auth_user_created trigger missing?`)
 
     // 4) students (10–20)
     const nStudents = int(10, 20)
