@@ -101,7 +101,7 @@ export function DateTimePicker({
         const { data, error } = await supabase
           .from("lessons")
           .update({ date: dateStr })
-          .eq("id", lessonId);
+          .eq("id", Number(lessonId));
 
         if (error) {
           console.error("Error updating lesson date:", error.message);
@@ -124,7 +124,7 @@ export function DateTimePicker({
       const { data, error } = await supabase
         .from("lessons")
         .select("date, time")
-        .eq("id", lessonId)
+        .eq("id", Number(lessonId))
         .single();
 
       if (error) {
@@ -213,7 +213,7 @@ export function DateTimePicker({
         const { data, error } = await supabase
           .from("lessons")
           .update({ time: timeStr })
-          .eq("id", lessonId);
+          .eq("id", Number(lessonId));
 
         if (error) {
           console.error("Error updating lesson time:", error.message);

@@ -115,7 +115,7 @@ export default function EditLesson() {
       console.error("Error fetching lesson:", error.message);
       return null;
     }
-    setLesson(data);
+    setLesson(data as unknown as Lesson);
   }
 
   async function fetchAvailableItems() {
@@ -125,14 +125,14 @@ export default function EditLesson() {
       console.error("Error fetching available items:", error.message);
       return null;
     }
-    setAvailableItems(data);
+    setAvailableItems(data as unknown as LessonItem[]);
   }
 
   // Function to associate a single item to a lesson
   async function associateItemToLesson(lessonId: string, itemId: string) {
     const association = {
-      lesson_id: lessonId,
-      lesson_item_id: itemId,
+      lesson_id: Number(lessonId),
+      lesson_item_id: Number(itemId),
     };
 
     const { data, error } = await supabase
@@ -172,7 +172,7 @@ export default function EditLesson() {
     const { data, error } = await supabase
       .from("lesson_item_associations")
       .select("*, lessons_items!lesson_item_id(*)")
-      .eq("lesson_id", lessonId);
+      .eq("lesson_id", Number(lessonId));
 
     if (error) {
       console.error("Error fetching existing associations:", error.message);
@@ -184,7 +184,7 @@ export default function EditLesson() {
       const selectedItems = data.map(
         (association) => association.lessons_items
       );
-      setSelected(selectedItems);
+      setSelected(selectedItems as unknown as LessonItem[]);
     }
   }
 
@@ -193,7 +193,7 @@ export default function EditLesson() {
     const { data: lessonData, error: lessonError } = await supabase
       .from("lessons")
       .select("profile_id")
-      .eq("id", lessonId)
+      .eq("id", Number(lessonId))
       .single();
 
     if (lessonError) {
@@ -205,7 +205,7 @@ export default function EditLesson() {
       const { data: lessonsCountData, error: countError } = await supabase
         .from("lessons")
         .select("id", { count: "exact" })
-        .eq("profile_id", profileId);
+        .eq("profile_id", profileId!);
 
       if (countError) {
         console.error("Error counting lessons:", countError);
@@ -228,8 +228,8 @@ export default function EditLesson() {
         profiles(*)
       `
       )
-      .eq("id", lessonId)
-      .eq("school_id", schoolId)
+      .eq("id", Number(lessonId))
+      .eq("school_id", schoolId!)
       .single();
 
     if (error) {

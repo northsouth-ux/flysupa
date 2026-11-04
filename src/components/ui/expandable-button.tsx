@@ -159,7 +159,7 @@ export default function ExpandableButton({
       const { error } = await supabase
         .from("lessons")
         .update(lessonData)
-        .eq("id", lessonId);
+        .eq("id", Number(lessonId));
 
       if (error) throw error;
 

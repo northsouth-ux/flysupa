@@ -87,7 +87,7 @@ export default function Home() {
         .from("lessons")
         .select("id", { count: "exact" })
         .eq("profile_id", profileId)
-        .eq("school_id", schoolId);
+        .eq("school_id", schoolId!);
 
       if (error) {
         console.error("Error counting lessons for profile:", error);
@@ -152,7 +152,7 @@ export default function Home() {
       const { count, error: countError } = await supabase
         .from("lessons")
         .select("*", { count: "exact", head: true })
-        .eq("school_id", schoolId)
+        .eq("school_id", schoolId!)
         .gte("date", new Date().toISOString().split("T")[0]);
 
       if (countError) {
@@ -174,7 +174,7 @@ export default function Home() {
           profiles (avatar_url, nome_utente)
         `
         )
-        .eq("school_id", schoolId)
+        .eq("school_id", schoolId!)
         .gte("date", new Date().toISOString().split("T")[0])
         .order("date", { ascending: true })
         .order("time", { ascending: true })

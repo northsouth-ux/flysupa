@@ -175,10 +175,11 @@ export function UserProvider({ children }: { children: ReactNode }) {
         });
 
         if (error) throw error;
-        if (data?.error) throw new Error(data.error);
-        if (!data) throw new Error("School creation returned no data");
+        const result = data as unknown as (School & { error?: string }) | null;
+        if (result?.error) throw new Error(result.error);
+        if (!result) throw new Error("School creation returned no data");
 
-        const newSchool = data as School;
+        const newSchool = result;
 
         setSchool(newSchool);
         setSchoolId(newSchool.id);
@@ -335,7 +336,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       const { error: updateError } = await supabase
         .from("profiles")
         .update({ [field]: filePath })
-        .eq("id", user?.id);
+        .eq("id", user?.id as string);
 
       if (updateError) throw updateError;
 

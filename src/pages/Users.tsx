@@ -112,7 +112,7 @@ export default function Users() {
 
         // Fetch avatar URLs for each profile
         const profilesWithAvatars = await Promise.all(
-          data.map(async (profile: Profile) => {
+          (data as Profile[]).map(async (profile) => {
             let avatarUrl = profile.avatar_url; // Initialize with the existing URL
             if (profile.avatar_url) {
               avatarUrl = await downloadAndSetUserAvatar(profile.avatar_url);

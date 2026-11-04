@@ -4,6 +4,7 @@
 - `npm run dev` - Start development server on the hosted Supabase `development` branch
 - `npm run dev:local` - Start development server on local Supabase (Docker)
 - `npm run build` - Build for production (runs TypeScript type check)
+- `npm run db:types` - Regenerate `src/database.types.ts` from the local database. After adding a migration, run `npm run db:reset` first
 - `npm run lint` - Run ESLint on all files
 - `npm test` - Run all tests in watch mode
 - `npm run test:ui` - Run tests with UI
