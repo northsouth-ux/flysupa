@@ -39,12 +39,18 @@ Dopo aver eseguito la migration, **imposta il tuo utente come platform admin** p
 UPDATE profiles SET platform_admin = true WHERE email = 'tua@email.com';
 ```
 
-## Avvio in sviluppo (ambiente locale)
+## Avvio in sviluppo
 
-`npm run dev` punta a **Supabase locale** (http://127.0.0.1:54321) — nessun dato cloud toccato. Prima avvia il database locale:
+`npm run dev` punta al **branch Supabase `development`** (https://pyilyqtuswkxwddqbgfu.supabase.co) — non serve Docker:
 
 ```bash
-npm run dev       # avvia tutto: colima + Supabase locale + Vite (http://localhost:5173)
+npm run dev       # avvia Vite (http://localhost:5173) sul branch Supabase development
+```
+
+`npm run dev:local` punta invece a **Supabase locale** (http://127.0.0.1:54321) — nessun dato cloud toccato:
+
+```bash
+npm run dev:local # avvia tutto: colima + Supabase locale + Vite (http://localhost:5173)
 npm run db:reset  # ricrea il DB locale e riapplica le migrations (+ seed)
 npm run db:stop   # ferma Supabase locale
 ```

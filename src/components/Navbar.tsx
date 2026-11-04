@@ -3,6 +3,7 @@ import { useUser } from "../hooks/useUser";
 import { signOutUser } from "../services/authServices";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
+import { describeSupabase } from "@/lib/infra";
 import {
   Moon,
   Sun,
@@ -37,17 +38,20 @@ export default function Navbar() {
   const { theme, setTheme } = useTheme();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Environment + branch for the badge (left of the fullscreen toggle)
+  // Environment + branch for the badges (bottom left)
   const envName: string =
     (import.meta.env.VITE_APP_ENV as string | undefined) ||
     (import.meta.env.DEV ? "development" : "production");
   const branch: string = __GIT_BRANCH__ || "unknown";
+  const supabaseAdminUrl = describeSupabase(import.meta.env.VITE_SUPABASE_URL).admin;
   const envBadgeClass =
     envName === "production"
-      ? "bg-red-600 text-white"
+      ? "bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300"
       : envName === "test"
-        ? "bg-amber-500 text-black"
-        : "bg-emerald-600 text-white";
+        ? "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300"
+        : envName === "local"
+          ? "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300"
+          : "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300";
 
   // Check if fullscreen is supported and update state when it changes
   useEffect(() => {
@@ -201,14 +205,31 @@ export default function Navbar() {
 
         {user && (
           <div className="flex items-center gap-4">
-            {/* Env + branch indicator */}
-            <div className="flex items-center gap-1.5">
-              <Badge className={`rounded-md text-xs font-semibold ${envBadgeClass}`}>
-                {envName}
-              </Badge>
+            {/* Env + branch indicator, pinned bottom left */}
+            <div className="pointer-events-none fixed bottom-2 left-2 z-50 flex max-w-[calc(100vw-1rem)] items-center gap-1">
+              {supabaseAdminUrl ? (
+                <a
+                  href={supabaseAdminUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Apri Supabase"
+                  className="pointer-events-auto shrink-0 hover:opacity-80">
+                  <Badge
+                    variant="outline"
+                    className={`rounded-md border-transparent px-1.5 text-[10px] font-semibold ${envBadgeClass}`}>
+                    {envName}
+                  </Badge>
+                </a>
+              ) : (
+                <Badge
+                  variant="outline"
+                  className={`shrink-0 rounded-md border-transparent px-1.5 text-[10px] font-semibold ${envBadgeClass}`}>
+                  {envName}
+                </Badge>
+              )}
               <Badge
                 variant="outline"
-                className="rounded-md text-xs font-mono text-muted-foreground">
+                className="block truncate rounded-md bg-background px-1.5 text-[10px] font-mono font-normal text-muted-foreground">
                 {branch}
               </Badge>
             </div>

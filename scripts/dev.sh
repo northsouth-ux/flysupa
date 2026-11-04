@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# One-command dev: ensure Docker (colima) + local Supabase are up, then run Vite.
+# `npm run dev:local`: ensure Docker (colima) + local Supabase are up, then run
+# Vite against them (mode=localdb loads .env.localdb).
 # Each step is idempotent — safe to run over and over.
 set -e
 
@@ -21,4 +22,4 @@ echo "📊 Supabase Studio: http://127.0.0.1:54323"
 open http://127.0.0.1:54323
 
 echo "▶️  Vite: http://localhost:5173"
-exec vite
+exec vite --mode localdb
