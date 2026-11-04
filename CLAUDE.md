@@ -24,6 +24,13 @@
 - UI state management through React context (UserContext)w
 - Follow existing import ordering: React, libraries, local component
 
+## Supabase dev branch
+The hosted Supabase `development` branch gets its migrations from the Supabase GitHub integration when a PR merges into `development`.
+
+- The "Supabase Preview" check on the commit says whether that worked. `seed-check` only tests a blank local database, so it won't catch this
+- If "Supabase Preview" fails, the dev site may be missing the migration. Fix that before merging more schema changes
+- Never fix it by running SQL by hand on the branch: the change is lost when the branch is rebuilt
+
 ## Git and Linear Workflow
 Production is `main`. Every change reaches it through a PR, so that Linear can track it (team `FS`).
 
