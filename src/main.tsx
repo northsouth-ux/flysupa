@@ -3,9 +3,9 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App.tsx';
 import './styles/index.css';
-import { logInfra } from './lib/infra';
+import { logInfra, showInfra } from './lib/infra';
 
-if (import.meta.env.DEV) {
+if (showInfra) {
   logInfra(import.meta.env.VITE_SUPABASE_URL, import.meta.env.MODE, __GIT_BRANCH__);
 }
 

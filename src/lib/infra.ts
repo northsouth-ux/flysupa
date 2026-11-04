@@ -1,6 +1,10 @@
 // Describes which Supabase the app is talking to, for the browser console banner
-// that src/main.tsx prints in dev and the env badge link in Navbar. The anon key
-// is deliberately never logged.
+// that src/main.tsx prints and the env badge link in Navbar. The anon key is
+// deliberately never logged.
+
+// Local dev, plus deployed builds of the development branch (flysupa-dev.vercel.app).
+// Production never matches, so its console stays clean.
+export const showInfra = import.meta.env.DEV || import.meta.env.VITE_APP_ENV === 'development'
 
 export type InfraTone = 'local' | 'development' | 'test' | 'production' | 'unknown'
 
@@ -60,7 +64,7 @@ export function infraRows(url: string, mode: string, branch: string): [string, s
     ['Data', infra.data],
     ['Admin', infra.admin ?? '-'],
     ['Docker', infra.docker],
-    ['Env file', `.env.${mode} (Vite mode: ${mode})`],
+    ['Env file', import.meta.env.DEV ? `.env.${mode} (Vite mode: ${mode})` : 'Vercel environment variables'],
     ['Git branch', branch],
   ]
 }
