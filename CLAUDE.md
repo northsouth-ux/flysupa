@@ -45,6 +45,15 @@ Release (only when the user asks):
 
 After each PR or merge, check the issue's status in Linear. The GitHub integration should move it; if it did not, update it and tell the user. An issue stays In Review while its code is only on `development`, and is Done only once its code is merged to `main`.
 
+## Schema changes
+The PR that needs a schema change is where it gets documented, so the change and the feature stay together.
+
+- Every schema change gets a migration in `supabase/migrations`, the updated database types if the repo generates them, and the "Database changes" section of the PR template
+- Never change structure by hand in the Supabase dashboard
+- Never edit a migration that has been merged. Add a new one
+- Rename or drop columns in stages: first add the new one and move the code to it, then remove the old one in a later release, so the running app keeps working
+- Big design choices get a short note in `docs/decisions/`
+
 ## Pending PRs
 At the start of each session, before anything else, show a short summary of open PRs: number, title, target branch, and whether it's ready to merge. Use the list from the SessionStart hook if it's in context; otherwise run `gh pr list --state open --json number,title,baseRefName,isDraft,mergeStateStatus,url`. If there are none, say so in one line.
 
