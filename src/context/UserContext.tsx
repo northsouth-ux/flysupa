@@ -11,7 +11,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [nomeUtente, setNomeUtente] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [licenseUrl, setLicenseUrl] = useState<string | null>(null);
-  const [totalHours, setTotalHours] = useState<number | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [platformAdmin, setPlatformAdmin] = useState<boolean | null>(null);
 
@@ -99,11 +98,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
         setNomeUtente(profile?.nome_utente || "");
         setIsAdmin(profile?.admin || false);
         setPlatformAdmin(profile?.platform_admin || false);
-        setTotalHours(
-          (profile as any)?.total_hours !== null
-            ? Number((profile as any).total_hours)
-            : null
-        );
         setEmail(user?.email || "");
 
         if (profile?.avatar_url) {
@@ -403,7 +397,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
         isAdmin,
         avatarUrl,
         licenseUrl,
-        totalHours,
         nomeUtente,
         setNomeUtente,
         uploadImage,

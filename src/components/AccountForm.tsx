@@ -99,7 +99,6 @@ export default function AccountForm() {
     user,
     nomeUtente,
     setNomeUtente,
-    totalHours,
     updateProfile,
     showConfirmAlert,
     setShowConfirmAlert,

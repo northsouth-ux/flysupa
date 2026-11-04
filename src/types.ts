@@ -116,7 +116,6 @@ export interface UserContextType {
   nomeUtente: string | null;
   avatarUrl: string | null;
   licenseUrl: string | null;
-  totalHours: number | null;
   isAdmin: boolean | null;
 
   // School / tenant data
