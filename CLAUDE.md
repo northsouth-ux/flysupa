@@ -33,7 +33,7 @@ Every change:
 - Use the issue's `gitBranchName` from Linear as the branch name, branched from an up-to-date `development`
 - Move the issue to In Progress when work starts
 - Open the PR into `development`, with the issue ID in the title (e.g. `FS-52 Fix topic chips in dark mode`)
-- Never mark an issue Done after merging to `development`: the code is not in production yet
+- When the PR merges into `development`, set the issue to In Review. Never mark it Done: the code is not in production yet
 
 Release (only when the user asks):
 - Open a PR from `development` to `main`
@@ -41,7 +41,7 @@ Release (only when the user asks):
 - Merge with a merge commit, never squash or rebase
 - Never merge into `main` unless the user explicitly asks for that release
 
-After each PR or merge, check the issue's status in Linear. The GitHub integration should move it; if it did not, update it and tell the user. An issue is Done only once its code is merged to `main`.
+After each PR or merge, check the issue's status in Linear. The GitHub integration should move it; if it did not, update it and tell the user. An issue stays In Review while its code is only on `development`, and is Done only once its code is merged to `main`.
 
 ## Pending PRs
 At the start of each session, before anything else, show a short summary of open PRs: number, title, target branch, and whether it's ready to merge. Use the list from the SessionStart hook if it's in context; otherwise run `gh pr list --state open --json number,title,baseRefName,isDraft,mergeStateStatus,url`. If there are none, say so in one line.
