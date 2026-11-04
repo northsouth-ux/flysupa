@@ -86,6 +86,14 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const fetchProfileAndSchool = async () => {
       setLoading(true);
       try {
+        // getSession only reads the browser's copy, so ask the server whether this
+        // user still exists (a reseed deletes and recreates its users).
+        const { error: userError } = await supabase.auth.getUser();
+        if (userError?.code === "user_not_found") {
+          await supabase.auth.signOut({ scope: "local" });
+          return;
+        }
+
         // Fetch profile (use maybeSingle so missing profiles don't crash)
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
