@@ -86,7 +86,11 @@ export default function ExpandableButton({
     if (!isExpanded && !expanded) {
       setIsExpanded(true);
     } else {
-      expanded ? updateLesson() : handleCreateLesson();
+      if (expanded) {
+        updateLesson();
+      } else {
+        handleCreateLesson();
+      }
     }
   };
 
