@@ -60,7 +60,7 @@ npm run test:run   # test singola esecuzione
 npm run test:ui    # test con interfaccia UI
 ```
 
-Gli ambienti cloud (**test** / **prod**) sono configurati via env vars Vercel
+Gli ambienti cloud (**development** / **prod**) sono configurati via env vars Vercel
 (`VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`); le chiavi sono in
 `~/.hermes/flysupa-environments.json`.
 
