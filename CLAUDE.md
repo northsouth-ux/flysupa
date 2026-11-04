@@ -39,6 +39,7 @@ Every change:
 Release (only when the user asks):
 - Open a PR from `development` to `main`
 - Find the issues it ships with `git log origin/main..origin/development`, and list all of them in the description: `Fixes FS-52, FS-53`
+- Add an entry in Italian to the "Novità" page of the Mintlify docs, using the `<Update>` component. Under the summary, list every GitHub PR the release ships, each as an `<Accordion>` titled with the PR title that holds a link to the PR and its description. Get the user's approval on the text before publishing it
 - Merge with a merge commit, never squash or rebase
 - Never merge into `main` unless the user explicitly asks for that release
 
