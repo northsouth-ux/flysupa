@@ -73,6 +73,8 @@ npm run test:run   # test singola esecuzione
 npm run test:ui    # test con interfaccia UI
 ```
 
+I test in `src/test/db` usano solo il Supabase locale: prima lancia `npm run db:start` e `npm run seed`. La CI li esegue su ogni PR.
+
 Gli ambienti cloud (**development** / **prod**) sono configurati via env vars Vercel
 (`VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`); le chiavi sono in
 `~/.hermes/flysupa-environments.json`.
