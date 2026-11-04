@@ -3,7 +3,7 @@ import { useUser } from "../hooks/useUser";
 import { signOutUser } from "../services/authServices";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
-import { describeSupabase } from "@/lib/infra";
+import { describeSupabase, showInfra } from "@/lib/infra";
 import {
   Moon,
   Sun,
@@ -203,37 +203,39 @@ export default function Navbar() {
           )}
         </div>
 
-        {user && (
-          <div className="flex items-center gap-4">
-            {/* Env + branch indicator, pinned bottom left */}
-            <div className="pointer-events-none fixed bottom-2 left-2 z-50 flex max-w-[calc(100vw-1rem)] items-center gap-1">
-              {supabaseAdminUrl ? (
-                <a
-                  href={supabaseAdminUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  title="Apri Supabase"
-                  className="pointer-events-auto shrink-0 hover:opacity-80">
-                  <Badge
-                    variant="outline"
-                    className={`rounded-md border-transparent px-1.5 text-[10px] font-semibold ${envBadgeClass}`}>
-                    {envName}
-                  </Badge>
-                </a>
-              ) : (
+        {/* Env + branch indicator, pinned bottom left */}
+        {(user || showInfra) && (
+          <div className="pointer-events-none fixed bottom-2 left-2 z-50 flex max-w-[calc(100vw-1rem)] items-center gap-1">
+            {supabaseAdminUrl ? (
+              <a
+                href={supabaseAdminUrl}
+                target="_blank"
+                rel="noreferrer"
+                title="Apri Supabase"
+                className="pointer-events-auto shrink-0 hover:opacity-80">
                 <Badge
                   variant="outline"
-                  className={`shrink-0 rounded-md border-transparent px-1.5 text-[10px] font-semibold ${envBadgeClass}`}>
+                  className={`rounded-md border-transparent px-1.5 text-[10px] font-semibold ${envBadgeClass}`}>
                   {envName}
                 </Badge>
-              )}
+              </a>
+            ) : (
               <Badge
                 variant="outline"
-                className="block truncate rounded-md bg-background px-1.5 text-[10px] font-mono font-normal text-muted-foreground">
-                {branch}
+                className={`shrink-0 rounded-md border-transparent px-1.5 text-[10px] font-semibold ${envBadgeClass}`}>
+                {envName}
               </Badge>
-            </div>
+            )}
+            <Badge
+              variant="outline"
+              className="block truncate rounded-md bg-background px-1.5 text-[10px] font-mono font-normal text-muted-foreground">
+              {branch}
+            </Badge>
+          </div>
+        )}
 
+        {user && (
+          <div className="flex items-center gap-4">
             {/* Fullscreen Toggle Button */}
             <Button
               variant="ghost"
