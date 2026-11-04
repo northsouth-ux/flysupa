@@ -23,6 +23,28 @@
 - UI state management through React context (UserContext)w
 - Follow existing import ordering: React, libraries, local component
 
+## Git and Linear Workflow
+Production is `main`. Every change reaches it through a PR, so that Linear can track it (team `FS`).
+
+Every change:
+- Never commit directly to `main` or `development`
+- Every change needs a Linear issue. Search for an existing one; if there is none, create it before starting, with a description of what the change is about and why
+- Use the issue's `gitBranchName` from Linear as the branch name, branched from an up-to-date `development`
+- Move the issue to In Progress when work starts
+- Open the PR into `development`, with the issue ID in the title (e.g. `FS-52 Fix topic chips in dark mode`)
+- Never mark an issue Done after merging to `development`: the code is not in production yet
+
+Release (only when the user asks):
+- Open a PR from `development` to `main`
+- Find the issues it ships with `git log origin/main..origin/development`, and list all of them in the description: `Fixes FS-52, FS-53`
+- Merge with a merge commit, never squash or rebase
+- Never merge into `main` unless the user explicitly asks for that release
+
+After each PR or merge, check the issue's status in Linear. The GitHub integration should move it; if it did not, update it and tell the user. An issue is Done only once its code is merged to `main`.
+
+## Pending PRs
+At the start of each session, before anything else, show a short summary of open PRs: number, title, target branch, and whether it's ready to merge. Use the list from the SessionStart hook if it's in context; otherwise run `gh pr list --state open --json number,title,baseRefName,isDraft,mergeStateStatus,url`. If there are none, say so in one line.
+
  ## Features
  
 Qualifies:
