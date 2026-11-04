@@ -1,14 +1,14 @@
-name: Seed check
+name: Database checks
 
-# Runs the migrations and the seed on a blank local database, so a schema change
-# that breaks the seed fails the PR. Also fails if the generated types don't match
-# the migrations.
+# Runs the migrations, the seed and the tests on a blank local database, so a change
+# that breaks the seed, lessons, logins or the separation between schools fails the PR.
+# Also fails if the generated types don't match the migrations.
 on:
   pull_request:
     branches: [development, main]
 
 jobs:
-  seed:
+  database:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -32,3 +32,5 @@ jobs:
           export SEED_SERVICE_KEY="$(supabase status -o env | sed -n 's/^SERVICE_ROLE_KEY="\(.*\)"$/\1/p')"
           npm run seed
           npm run seed
+      - name: Run the tests
+        run: npm run test:run

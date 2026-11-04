@@ -8,7 +8,7 @@
 - `npm run lint` - Run ESLint on all files
 - `npm test` - Run all tests in watch mode
 - `npm run test:ui` - Run tests with UI
-- `npm run test:run` - Run tests once without watch mode
+- `npm run test:run` - Run tests once without watch mode. The tests in `src/test/db` need local Supabase: run `npm run db:start` and `npm run seed` first. CI runs them on every PR
 - `npm test -- -t "test name"` - Run a specific test
 
 ## Code Style Guidelines
