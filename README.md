@@ -55,6 +55,13 @@ npm run db:reset  # ricrea il DB locale e riapplica le migrations (+ seed)
 npm run db:stop   # ferma Supabase locale
 ```
 
+Dati di esempio (mai in produzione):
+
+```bash
+npm run seed              # Supabase locale
+npm run seed:development  # branch Supabase `development`
+```
+
 Altri comandi:
 ```bash
 npm run host       # come dev, esposto sulla rete locale

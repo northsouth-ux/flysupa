@@ -2,9 +2,13 @@
 // Seed FlySupa dev/test environments with realistic data.
 //
 // Usage:
-//   node scripts/seed.mjs dev     # local Supabase (127.0.0.1:54321)
-//   node scripts/seed.mjs test    # test cloud project
-//   npm run seed                  # default = dev
+//   node scripts/seed.mjs dev          # local Supabase (127.0.0.1:54321)
+//   node scripts/seed.mjs development  # hosted Supabase `development` branch
+//   node scripts/seed.mjs test         # test cloud project
+//   npm run seed                       # default = dev
+//   npm run seed:development           # hosted Supabase `development` branch
+//
+// Never writes to production: any target on the production project is refused.
 //
 // Creates 3 schools, each with:
 //   - 1 owner admin (a real auth user you can log in as)
@@ -14,26 +18,39 @@
 // Idempotent: clears existing `seed-*` data first. Reproducible: set
 // SEED_RANDOM=<int> to vary the dataset (default 42).
 import { createClient } from '@supabase/supabase-js'
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { homedir } from 'node:os'
 import path from 'node:path'
+
+const PROD_REF = 'nihffzcyqgbxpdbrnavr'
+const DEVELOPMENT_URL = 'https://pyilyqtuswkxwddqbgfu.supabase.co'
+const ENVS = ['dev', 'development', 'test']
 
 // ---- resolve env ----
 const args = process.argv.slice(2)
 const envIdx = args.indexOf('--env')
-const env = envIdx >= 0 ? args[envIdx + 1] : args.find((a) => ['dev', 'test'].includes(a)) || 'dev'
-if (!['dev', 'test'].includes(env)) {
-  console.error(`Usage: node scripts/seed.mjs [dev|test]  (got "${env}")`)
+const env = envIdx >= 0 ? args[envIdx + 1] : args.find((a) => ENVS.includes(a)) || 'dev'
+if (!ENVS.includes(env)) {
+  console.error(`Usage: node scripts/seed.mjs [${ENVS.join('|')}]  (got "${env}")`)
   process.exit(1)
 }
 
-const cfg = JSON.parse(readFileSync(path.join(homedir(), '.hermes', 'flysupa-environments.json'), 'utf8'))
-const target = env === 'dev'
-  ? { url: 'http://127.0.0.1:54321', serviceKey: cfg.dev?.service_key }
-  : { url: cfg.test?.url, serviceKey: cfg.test?.service_key }
+// CI has no key file: it passes the local stack's key in SEED_SERVICE_KEY.
+const cfgPath = path.join(homedir(), '.hermes', 'flysupa-environments.json')
+const cfg = existsSync(cfgPath) ? JSON.parse(readFileSync(cfgPath, 'utf8')) : {}
+const target = {
+  dev: { url: 'http://127.0.0.1:54321', serviceKey: process.env.SEED_SERVICE_KEY || cfg.dev?.service_key },
+  development: { url: DEVELOPMENT_URL, serviceKey: cfg.development?.service_key },
+  test: { url: cfg.test?.url, serviceKey: cfg.test?.service_key },
+}[env]
+
+if (target.url?.includes(PROD_REF) || (cfg.prod?.service_key && target.serviceKey === cfg.prod.service_key)) {
+  console.error('Refusing to seed: this target is the production project.')
+  process.exit(1)
+}
 
 if (!target?.serviceKey) {
-  console.error(`Missing service_role key for "${env}". Run the key-collection step first.`)
+  console.error(`Missing service_role key for "${env}". Add it to ${cfgPath} as "${env}": { "service_key": "..." }.`)
   process.exit(1)
 }
 
@@ -60,16 +77,21 @@ const FIRST = ['Mario', 'Luca', 'Giulia', 'Anna', 'Paolo', 'Sara', 'Marco', 'Ele
 const LAST = ['Rossi', 'Bianchi', 'Ferrari', 'Colombo', 'Ricci', 'Greco', 'Romano', 'Gallo', 'Conti', 'Costa', 'Marino', 'Barbieri', 'Fontana', 'Moretti', 'Villa', 'Rizzo', 'Serra', 'Farina', 'Pellegrini', 'Mancini']
 const ITEMS = ['Frenata di emergenza', 'Parcheggio in retro', 'Rotonda', 'Precedenza', 'Sorpasso', 'Guida notturna', 'Autostrada', 'Parcheggio a S', 'Curve', 'Semaforo']
 
+// Throws on any Supabase error, so a schema change that breaks the seed fails loudly.
+async function must(query, what) {
+  const { data, error } = await query
+  if (error) throw new Error(`${what}: ${error.message}`)
+  return data
+}
+
 async function clearSeed() {
   console.log('Clearing existing seed data...')
-  await supabase.from('schools').delete().like('slug', 'seed-%')
-  await supabase.from('profiles').delete().like('email', 'seed-%')
-  const { data, error } = await supabase.auth.admin.listUsers({ perPage: 1000 })
-  if (!error) {
-    const users = (data && (data.users || data)) || []
-    for (const u of users) {
-      if (u.email?.startsWith('seed-')) await supabase.auth.admin.deleteUser(u.id)
-    }
+  await must(supabase.from('schools').delete().like('slug', 'seed-%'), 'clear schools')
+  await must(supabase.from('profiles').delete().like('email', 'seed-%'), 'clear profiles')
+  const data = await must(supabase.auth.admin.listUsers({ perPage: 1000 }), 'list users')
+  const users = (data && (data.users || data)) || []
+  for (const u of users) {
+    if (u.email?.startsWith('seed-')) await must(supabase.auth.admin.deleteUser(u.id), 'delete user')
   }
 }
 
@@ -99,8 +121,8 @@ async function main() {
     if (schoolErr) throw schoolErr
 
     // 3) owner membership + link admin profile to school
-    await supabase.from('school_members').insert({ user_id: admin.id, school_id: school.id, role: 'owner' })
-    await supabase.from('profiles').update({ school_id: school.id, nome_utente: `Admin ${s}` }).eq('id', admin.id)
+    await must(supabase.from('school_members').insert({ user_id: admin.id, school_id: school.id, role: 'owner' }), 'school member insert')
+    await must(supabase.from('profiles').update({ school_id: school.id, nome_utente: `Admin ${s}` }).eq('id', admin.id), 'admin profile update')
 
     // 4) students (10–20)
     const nStudents = int(10, 20)
@@ -113,8 +135,7 @@ async function main() {
       licenza_date: randDate(2022, 2025),
       is_student: true,
     }))
-    const { data: students } = await supabase.from('profiles').insert(studentRows).select()
-    if (!students) throw new Error('student insert failed')
+    const students = await must(supabase.from('profiles').insert(studentRows).select(), 'student insert')
 
     // 5) lesson items (6–10)
     const nItems = int(6, 10)
@@ -123,8 +144,7 @@ async function main() {
       title: ITEMS[k % ITEMS.length],
       description: `Esercizio ${k + 1}`,
     }))
-    const { data: items } = await supabase.from('lessons_items').insert(itemRows).select()
-    if (!items) throw new Error('item insert failed')
+    const items = await must(supabase.from('lessons_items').insert(itemRows).select(), 'item insert')
 
     // 6) lessons (3–8 per student)
     const lessonRows = []
@@ -156,7 +176,7 @@ async function main() {
         assocRows.push({ lesson_id: lesson.id, lesson_item_id: itemId })
       }
     }
-    if (assocRows.length) await supabase.from('lesson_item_associations').insert(assocRows)
+    if (assocRows.length) await must(supabase.from('lesson_item_associations').insert(assocRows), 'association insert')
 
     logins.push({ email, school: school.name, students: nStudents, lessons: lessonRows.length })
   }

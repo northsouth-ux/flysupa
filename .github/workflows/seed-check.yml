@@ -1,0 +1,29 @@
+name: Seed check
+
+# Runs the migrations and the seed on a blank local database, so a schema change
+# that breaks the seed fails the PR.
+on:
+  pull_request:
+    branches: [development, main]
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.122.0
+      - run: npm ci
+      - name: Start Supabase and apply the migrations
+        run: supabase start -x studio,imgproxy,realtime,edge-runtime,logflare,vector,supavisor,mailpit,postgres-meta
+      - name: Run the seed twice
+        run: |
+          export SEED_SERVICE_KEY="$(supabase status -o env | sed -n 's/^SERVICE_ROLE_KEY="\(.*\)"$/\1/p')"
+          npm run seed
+          npm run seed
