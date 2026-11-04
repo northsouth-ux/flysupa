@@ -7,6 +7,7 @@ import {
   SortingState,
   getSortedRowModel,
   ColumnFiltersState,
+  FilterFn,
   getFilteredRowModel,
 } from "@tanstack/react-table";
 
@@ -26,7 +27,7 @@ import { useNavigate } from "react-router-dom";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  searchColumn?: string;
+  searchFn?: FilterFn<TData>;
   searchPlaceholder?: string;
   headerActions?: React.ReactNode;
 }
@@ -40,7 +41,7 @@ interface DataTableProps<TData, TValue> {
  * Props:
  * - columns: Array of column definitions for the table.
  * - data: Array of data to be displayed in the table.
- * - searchColumn: Optional. The column to be used for global search.
+ * - searchFn: Optional. Decides which rows match the search box. The box only shows when it is set.
  * - searchPlaceholder: Optional. Placeholder text for the search input. Defaults to "Cerca...".
  *
  * State:
@@ -58,7 +59,7 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
-  searchColumn,
+  searchFn,
   searchPlaceholder = "Cerca...",
   headerActions,
 }: DataTableProps<TData, TValue>) {
@@ -86,11 +87,13 @@ export function DataTable<TData, TValue>({
       globalFilter,
     },
     onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: searchFn,
+    getColumnCanGlobalFilter: () => true,
   });
 
   return (
     <div>
-      {searchColumn && (
+      {searchFn && (
         <div className="flex justify-between items-center py-4">
           <h1 className="text-2xl font-bold tracking-tight">
             Studenti

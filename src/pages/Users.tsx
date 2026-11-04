@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useUser } from "../hooks/useUser.tsx";
 import { useNavigate } from "react-router-dom";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, FilterFn } from "@tanstack/react-table";
 import { Profile } from "@/types";
 import { supabase } from "@/services/supabaseClient.tsx";
 
@@ -52,6 +52,14 @@ import { UserPlus } from "lucide-react";
 
 // Update imports to include our custom Avatar
 import Avatar from "@/components/Avatar";
+
+// The search box looks at the student's name and email, not at every column.
+const matchesStudentSearch: FilterFn<Profile> = (row, _columnId, value) => {
+  const { nome_utente, cognome_utente, email } = row.original;
+  const fullName = [nome_utente, cognome_utente].filter(Boolean).join(" ");
+  const search = String(value).trim().toLowerCase();
+  return [fullName, email].some((text) => text?.toLowerCase().includes(search));
+};
 
 const formatDate = (dateStr: string | number | Date) => {
   if (!dateStr) return "N/A";
@@ -323,7 +331,7 @@ export default function Users() {
           <DataTable
             columns={columns}
             data={profiles}
-            searchColumn="email"
+            searchFn={matchesStudentSearch}
             searchPlaceholder="Cerca studenti..."
             headerActions={
               <Button onClick={() => setDialogOpen(true)}>
