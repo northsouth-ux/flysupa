@@ -1,7 +1,8 @@
 # FlySupa Project Guide
 
 ## Build/Test Commands
-- `npm run dev` - Start development server
+- `npm run dev` - Start development server on the hosted Supabase `development` branch
+- `npm run dev:local` - Start development server on local Supabase (Docker)
 - `npm run build` - Build for production (runs TypeScript type check)
 - `npm run lint` - Run ESLint on all files
 - `npm test` - Run all tests in watch mode

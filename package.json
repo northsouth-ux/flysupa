@@ -5,7 +5,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "bash scripts/dev.sh",
+    "dev": "vite",
+    "dev:local": "bash scripts/dev.sh",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
