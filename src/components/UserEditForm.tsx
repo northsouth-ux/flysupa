@@ -156,7 +156,7 @@ export default function UserEditForm() {
       }
 
       if (data) {
-        const profileData = data;
+        const profileData = data as Profile;
 
         // Download and set avatar if available
         if (profileData.avatar_url) {
@@ -295,8 +295,8 @@ export default function UserEditForm() {
       const { error } = await supabase
         .from("lessons")
         .delete()
-        .eq("id", lessonId)
-        .eq("school_id", schoolId);
+        .eq("id", Number(lessonId))
+        .eq("school_id", schoolId!);
       if (error) throw error;
       await fetchProfileLessons(profileId);
     } catch (err: any) {

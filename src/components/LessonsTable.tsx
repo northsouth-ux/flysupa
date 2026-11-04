@@ -73,7 +73,7 @@ export default function LessonsTable({
         supabase
           .from("lesson_item_associations")
           .select("lesson_item_id")
-          .eq("lesson_id", lessonId),
+          .eq("lesson_id", Number(lessonId)),
       ]);
 
       if (itemsRes.error) {
@@ -116,7 +116,7 @@ export default function LessonsTable({
 
     const { error } = await supabase
       .from("lesson_item_associations")
-      .insert([{ lesson_id: lessonId, lesson_item_id: itemId }]);
+      .insert([{ lesson_id: Number(lessonId), lesson_item_id: Number(itemId) }]);
 
     if (error) {
       console.error("Error associating item to lesson:", error.message);

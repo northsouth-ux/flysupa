@@ -50,7 +50,8 @@ const AuthRedirect = () => {
         });
 
         if (error) throw error;
-        if (data?.error) throw new Error(data.error);
+        const result = data as { error?: string } | null;
+        if (result?.error) throw new Error(result.error);
 
         sessionStorage.removeItem("invite");
         return true;

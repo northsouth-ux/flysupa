@@ -56,7 +56,7 @@ export default function Join() {
       const { data: invite, error } = await supabase
         .from("invites")
         .select("*, schools(name)")
-        .eq("token", token)
+        .eq("token", token!)
         .single();
 
       if (cancelled) return;
@@ -99,11 +99,12 @@ export default function Join() {
       // Join atomically via SECURITY DEFINER RPC (validates invite server-side,
       // inserts membership, sets active school, marks invite used).
       const { data, error } = await supabase.rpc("join_school_via_invite", {
-        invite_token: token,
+        invite_token: token!,
       });
 
       if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      const result = data as { error?: string } | null;
+      if (result?.error) throw new Error(result.error);
 
       navigate("/home");
     } catch (err: any) {

@@ -1,7 +1,8 @@
 name: Seed check
 
 # Runs the migrations and the seed on a blank local database, so a schema change
-# that breaks the seed fails the PR.
+# that breaks the seed fails the PR. Also fails if the generated types don't match
+# the migrations.
 on:
   pull_request:
     branches: [development, main]
@@ -21,7 +22,11 @@ jobs:
           version: 2.122.0
       - run: npm ci
       - name: Start Supabase and apply the migrations
-        run: supabase start -x studio,imgproxy,realtime,edge-runtime,logflare,vector,supavisor,mailpit,postgres-meta
+        run: supabase start -x studio,imgproxy,realtime,edge-runtime,logflare,vector,supavisor,mailpit
+      - name: Check the database types are up to date
+        run: |
+          npm run --silent db:types
+          git diff --exit-code -- src/database.types.ts || { echo "::error::src/database.types.ts is out of date. Run npm run db:reset and npm run db:types, then commit the file."; exit 1; }
       - name: Run the seed twice
         run: |
           export SEED_SERVICE_KEY="$(supabase status -o env | sed -n 's/^SERVICE_ROLE_KEY="\(.*\)"$/\1/p')"
