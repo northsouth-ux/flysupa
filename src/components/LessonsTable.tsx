@@ -360,7 +360,7 @@ export default function LessonsTable({
                           <Button
                             size="icon"
                             variant="outline"
-                            className="flex w-full items-center bg-muted p-2 rounded bg-gray-400 text-white cursor-pointer"
+                            className="flex w-full items-center p-2 rounded cursor-pointer"
                             onClick={(e) => {
                               e.stopPropagation();
                               openAddItemDialog(lesson.id);
