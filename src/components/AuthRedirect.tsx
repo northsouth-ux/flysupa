@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "../hooks/useUser";
 import { supabase } from "../services/supabaseClient";
 
+const PUBLIC_PATHS = ["/login", "/register", "/check", "/auth/confirm", "/join"];
+
 const AuthRedirect = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -12,15 +14,20 @@ const AuthRedirect = () => {
     // Wait until loading is done before redirecting
     if (loading) return;
 
-    // Not logged in — let the login page handle it
-    if (!user) return;
+    // Not logged in — everything but the public pages goes to the login page
+    if (!user) {
+      if (!PUBLIC_PATHS.includes(location.pathname)) {
+        navigate("/login", { replace: true });
+      }
+      return;
+    }
 
-    if (!shouldRedirect) return;
+    // Logged in users never stay on the login page, even without a fresh sign-in
+    if (!shouldRedirect && location.pathname !== "/login") return;
 
     // Already on one of these onboarding pages — don't redirect away
     if (
       location.pathname === "/register-school" ||
-      location.pathname === "/login" ||
       location.pathname === "/onboarding" ||
       location.pathname === "/join"
     ) {
@@ -76,10 +83,10 @@ const AuthRedirect = () => {
       return;
     }
 
-    // Only redirect to /home from post-login landing pages. On a reload of a
+    // Only redirect to the root from post-login landing pages. On a reload of a
     // deep link (e.g. /user-edit/:id) the auth listener fires again, so stay put.
-    if (["/", "/account", "/auth/confirm"].includes(location.pathname)) {
-      navigate("/home");
+    if (["/login", "/account", "/auth/confirm"].includes(location.pathname)) {
+      navigate("/", { replace: true });
     }
     setShouldRedirect(false);
   }, [user, schoolId, loading, shouldRedirect, profileComplete, platformAdmin, navigate, setShouldRedirect, location.pathname]);

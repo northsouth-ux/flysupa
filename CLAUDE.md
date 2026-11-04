@@ -34,6 +34,7 @@ Every change:
 - Move the issue to In Progress when work starts
 - Open the PR into `development`, with the issue ID in the title (e.g. `FS-52 Fix topic chips in dark mode`)
 - When the PR merges into `development`, set the issue to In Review. Never mark it Done: the code is not in production yet
+- If a PR changes a table `scripts/seed.mjs` writes to, or adds a feature that needs example data, update the seed in the same PR. CI runs the migrations and the seed on a blank database
 
 Release (only when the user asks):
 - Open a PR from `development` to `main`

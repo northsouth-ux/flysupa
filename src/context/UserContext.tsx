@@ -51,6 +51,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
+        // Stay loading until the profile effect below has fetched the school,
+        // so AuthRedirect never sees a signed-in user without one yet.
+        setLoading(true);
         setUser({
           id: session.user.id,
           email: session.user.email || "",
