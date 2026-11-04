@@ -22,6 +22,8 @@ jobs:
       - run: npm ci
       - name: Start Supabase and apply the migrations
         run: supabase start -x studio,imgproxy,realtime,edge-runtime,logflare,vector,supavisor,mailpit,postgres-meta
+      - name: Break the schema the way a bad migration would
+        run: docker exec supabase_db_flysupa psql -U postgres -c 'alter table public.lessons_items rename column title to title_broken'
       - name: Run the seed twice
         run: |
           export SEED_SERVICE_KEY="$(supabase status -o env | sed -n 's/^SERVICE_ROLE_KEY="\(.*\)"$/\1/p')"
