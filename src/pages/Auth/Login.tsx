@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { supabase } from "../../services/supabaseClient.tsx";
 
 // Shadcn Components
@@ -21,7 +21,6 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null); // Track error state
-  const navigate = useNavigate();
 
   useEffect(() => {
     setPassword("");
@@ -37,10 +36,9 @@ export default function Login() {
       password,
     });
 
+    // On success AuthRedirect moves the user on, once their school is loaded
     if (error) {
       setError(error.message); // Store error message
-    } else {
-      navigate("/account");
     }
 
     setLoading(false);
